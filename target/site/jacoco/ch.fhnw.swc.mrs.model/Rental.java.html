@@ -1,0 +1,312 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Rental.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Movie Rental System</a> &gt; <a href="index.source.html" class="el_package">ch.fhnw.swc.mrs.model</a> &gt; <span class="el_source">Rental.java</span></div><h1>Rental.java</h1><pre class="source lang-java linenums"><span class="fc" id="L1">package ch.fhnw.swc.mrs.model;</span>
+
+import java.time.LocalDate;
+import java.time.Period;
+import java.time.temporal.ChronoUnit;
+
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.ReadOnlyDoubleProperty;
+import javafx.beans.property.ReadOnlyLongProperty;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleLongProperty;
+import javafx.beans.property.SimpleObjectProperty;
+
+/**
+ * @author wolfgang.schwaiger
+ * 
+ */
+public class Rental {
+    /** Flag indicating whether the object has been initialized. */
+<span class="fc" id="L22">    private boolean initialized = false;</span>
+<span class="fc" id="L23">    private final IntegerProperty id = new SimpleIntegerProperty(0) {</span>
+        @Override
+        public void set(int anId) {
+<span class="fc bfc" id="L26" title="All 2 branches covered.">            if (initialized) {</span>
+<span class="fc" id="L27">                throw new MovieRentalException(&quot;illegal change of rental's id&quot;);</span>
+            } else {
+<span class="fc" id="L29">                initialized = true;</span>
+<span class="fc" id="L30">                super.set(anId);</span>
+            }
+<span class="fc" id="L32">        }</span>
+    };
+<span class="fc" id="L34">    private final ObjectProperty&lt;Movie&gt; movie = new SimpleObjectProperty&lt;Movie&gt;() {</span>
+        @Override
+        public void set(Movie aMovie) {
+<span class="fc bfc" id="L37" title="All 6 branches covered.">            if (aMovie == null || (initialized &amp;&amp; aMovie.isRented())) {</span>
+<span class="fc" id="L38">                throw new MovieRentalException(&quot;movie must not be null or is already rented.&quot;);</span>
+            }
+<span class="fc" id="L40">            super.set(aMovie);</span>
+<span class="fc" id="L41">        }</span>
+    };
+<span class="fc" id="L43">    private final ObjectProperty&lt;User&gt; user = new SimpleObjectProperty&lt;User&gt;() {</span>
+        @Override
+        public void set(User anUser) {
+<span class="fc bfc" id="L46" title="All 2 branches covered.">            if (anUser == null) {</span>
+<span class="fc" id="L47">                throw new MovieRentalException(&quot;user must not be null.&quot;);</span>
+            }
+<span class="fc" id="L49">            super.set(anUser);</span>
+<span class="fc" id="L50">        }</span>
+    };
+<span class="fc" id="L52">    private final ObjectProperty&lt;LocalDate&gt; rentalDate = new SimpleObjectProperty&lt;LocalDate&gt;() {</span>
+        @Override
+        public void set(LocalDate aRentalDate) {
+<span class="fc bfc" id="L55" title="All 4 branches covered.">            if (aRentalDate == null || aRentalDate.isAfter(LocalDate.now())) {</span>
+<span class="fc" id="L56">                throw new IllegalArgumentException(&quot;Rental date must not be null or in the future.&quot;);</span>
+            }
+<span class="fc" id="L58">            super.set(aRentalDate);</span>
+<span class="fc" id="L59">        }</span>
+    };
+<span class="fc" id="L61">    private final ReadOnlyLongProperty rentalDays = new SimpleLongProperty(0) {</span>
+        @Override
+        public long get() {
+<span class="fc" id="L64">            return ChronoUnit.DAYS.between(rentalDate.get(), LocalDate.now());</span>
+        }
+    };
+<span class="fc" id="L67">    private final ReadOnlyDoubleProperty rentalFee = new SimpleDoubleProperty(0.0D) {</span>
+        @Override
+        public double get() {
+<span class="fc" id="L70">            return getMovie().getPriceCategory().getCharge(getRentalDays());</span>
+        }
+    };
+
+    /**
+     * Unique identifier for a Rental object.
+     * 
+     * @return Java FX property for unique identification number.
+     */
+    public IntegerProperty idProperty() {
+<span class="nc" id="L80">        return id;</span>
+    }
+
+    /**
+     * The movie that was rented.
+     * 
+     * @return Java FX property for the movie.
+     */
+    public ObjectProperty&lt;Movie&gt; movieProperty() {
+<span class="nc" id="L89">        return movie;</span>
+    }
+
+    /**
+     * The user who is renting.
+     * 
+     * @return Java FX property for the user.
+     */
+    public ObjectProperty&lt;User&gt; userProperty() {
+<span class="nc" id="L98">        return user;</span>
+    }
+
+    /**
+     * The date when the move was rented.
+     * 
+     * @return Java FX property for the rental date.
+     */
+    public ObjectProperty&lt;LocalDate&gt; rentalDateProperty() {
+<span class="nc" id="L107">        return rentalDate;</span>
+    }
+
+    /**
+     * The duration of this rental in days.
+     * 
+     * @return Java FX property for the user.
+     */
+    public ReadOnlyLongProperty rentalDaysProperty() {
+<span class="nc" id="L116">        return rentalDays;</span>
+    };
+
+    /**
+     * The fee that is charged for this Rental.
+     * 
+     * @return Java FX property for rental fee.
+     */
+    public ReadOnlyDoubleProperty rentalFeeProperty() {
+<span class="nc" id="L125">        return rentalFee;</span>
+    }
+
+    /** The maximum number of movies a user may rent. */
+    public static final int MAX_NUMBER_OF_RENTALS = 3;
+
+    /**
+     * Constructs a rental of a movie to a user for a certain number of days.
+     * 
+     * @param aUser User who is renting aMovie.
+     * @param aMovie Movie that is rented.
+     * @throws IllegalStateException if the movie is already rented.
+     * @throws NullPointerException if not all input parameters where set.
+     * @throws IllegalArgumentException if the user is too young to see the movie, or the user has
+     *             already rented the maximum rentable movies
+     * @throws MovieRentalException if the user is not old enough to rent the movie.
+     */
+<span class="fc" id="L142">    public Rental(User aUser, Movie aMovie) {</span>
+<span class="fc" id="L143">        initialized = true;</span>
+<span class="fc" id="L144">        user.set(aUser);</span>
+<span class="fc" id="L145">        movie.set(aMovie);</span>
+<span class="fc" id="L146">        initialized = false;</span>
+        
+<span class="fc bfc" id="L148" title="All 2 branches covered.">        if (maxNumberOfRentalsReached(aUser)) {</span>
+<span class="fc" id="L149">            throw new IllegalArgumentException(&quot;Max. &quot; + MAX_NUMBER_OF_RENTALS + &quot; Filme ausleihbar&quot;);</span>
+        }
+<span class="fc bfc" id="L151" title="All 2 branches covered.">        if (!isUserOfAge(aMovie, aUser)) {</span>
+<span class="fc" id="L152">            throw new MovieRentalException(&quot;user &quot; + aUser.getId() + &quot; not old enough to rent movie &quot; + aMovie.getId());</span>
+        }
+
+<span class="fc" id="L155">        aUser.getRentals().add(this);</span>
+<span class="fc" id="L156">        aMovie.setRented(true);</span>
+<span class="fc" id="L157">        rentalDate.set(LocalDate.now());</span>
+<span class="fc" id="L158">    }</span>
+    
+    /**
+     * Used to instantiate Rental objects based on data from the database.
+     */
+<span class="fc" id="L163">    private Rental() { }</span>
+
+    /**
+     * Constructs a rental of a movie to a user at a given date for a certain number of days.
+     * 
+     * @param id the unique identification of this rental
+     * @param aUser User who is renting aMovie.
+     * @param aMovie Movie that is rented.
+     * @param aRentalDate date of start of this rental.
+     * @throws NullPointerException if not all input parameters where set.
+     * @throws MovieRentalException if the user is not old enough to rent the movie.
+     * @return a newly initialized Rental object.
+     */
+    public static Rental materializeRentalFromDB(int id, User aUser, Movie aMovie, LocalDate aRentalDate) {
+<span class="fc" id="L177">        Rental rental = new Rental();</span>
+<span class="fc" id="L178">        rental.user.set(aUser);</span>
+<span class="fc" id="L179">        rental.movie.set(aMovie);</span>
+<span class="fc" id="L180">        rental.rentalDate.set(aRentalDate);</span>
+<span class="fc" id="L181">        rental.setId(id);</span>
+
+<span class="fc" id="L183">        aUser.getRentals().add(rental);</span>
+<span class="fc" id="L184">        aMovie.setRented(true);</span>
+<span class="fc" id="L185">        return rental;</span>
+    }
+
+    /**
+     * Checks if the number of maximum rentals has been reached.
+     * 
+     * @param aUser the user to check the rentals.
+     * @return true if maximum is reached, otherwise false.
+     */
+    private boolean maxNumberOfRentalsReached(User aUser) {
+<span class="fc bfc" id="L195" title="All 2 branches covered.">        return aUser.getRentals().size() &gt;= MAX_NUMBER_OF_RENTALS;</span>
+    }
+
+    /**
+     * @return the unique rental identifier.
+     */
+    public int getId() {
+<span class="fc" id="L202">        return id.get();</span>
+    }
+
+    /**
+     * The unique identifier can only be set once.
+     * 
+     * @param anId a unique identifier for rentals.
+     * @throws MovieRentalException if the id has already been set.
+     */
+    public void setId(int anId) {
+<span class="fc" id="L212">        id.set(anId);</span>
+<span class="fc" id="L213">    }</span>
+
+    /**
+     * Calculate the duration of this rental.
+     * 
+     * @return the number of days this movie is rented to the user.
+     */
+    public long getRentalDays() {
+<span class="fc" id="L221">        return rentalDays.get();</span>
+    }
+
+    /**
+     * @return The rental fee to pay for this rental.
+     */
+    public double getRentalFee() {
+<span class="fc" id="L228">        return rentalFee.get();</span>
+    }
+
+    /**
+     * @return the rented movie.
+     */
+    public Movie getMovie() {
+<span class="fc" id="L235">        return movie.get();</span>
+    }
+
+    /**
+     * @return the user who is renting.
+     */
+    public User getUser() {
+<span class="fc" id="L242">        return user.get();</span>
+    }
+
+    /**
+     * @return the rental date.
+     */
+    public LocalDate getRentalDate() {
+<span class="fc" id="L249">        return rentalDate.get();</span>
+    }
+
+    /**
+     * @param aMovie the movie that is rented.
+     * @throws NullPointerException if aMovie is &lt;code&gt;null&lt;/code&gt;.
+     */
+    protected void setMovie(Movie aMovie) {
+<span class="fc" id="L257">        movie.set(aMovie);</span>
+<span class="fc" id="L258">    }</span>
+
+    /**
+     * @param anUser the user that is renting a movie.
+     * @throws NullPointerException if anUser is &lt;code&gt;null&lt;/code&gt;.
+     */
+    protected void setUser(User anUser) {
+<span class="fc" id="L265">        user.set(anUser);</span>
+<span class="fc" id="L266">    }</span>
+
+    /**
+     * @param aRentalDate the date of the rental.
+     */
+    protected void setRentalDate(LocalDate aRentalDate) {
+<span class="nc" id="L272">        rentalDate.set(aRentalDate);</span>
+<span class="nc" id="L273">    }</span>
+
+    @Override
+    public boolean equals(Object o) {
+<span class="pc bpc" id="L277" title="1 of 2 branches missed.">        boolean result = this == o;</span>
+<span class="pc bpc" id="L278" title="1 of 2 branches missed.">        if (!result) {</span>
+<span class="nc bnc" id="L279" title="All 2 branches missed.">            if (o instanceof Rental) {</span>
+<span class="nc" id="L280">                Rental other = (Rental) o;</span>
+<span class="nc bnc" id="L281" title="All 6 branches missed.">                result = initialized ? getId() == other.getId() : initialized == other.initialized;</span>
+<span class="nc" id="L282">                result &amp;= getMovie().equals(other.getMovie());</span>
+<span class="nc" id="L283">                result &amp;= getUser().equals(other.getUser());</span>
+            }
+        }
+<span class="fc" id="L286">        return result;</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="fc bfc" id="L291" title="All 2 branches covered.">        int result = initialized ? getId() : 0;</span>
+<span class="fc" id="L292">        result = result * 19 + getMovie().hashCode();</span>
+<span class="fc" id="L293">        result = result * 19 + getUser().hashCode();</span>
+<span class="fc" id="L294">        return result;</span>
+    }
+
+    /**
+     * @param m the movie the user u wants to rent.
+     * @param u the user who wants to rent movie m.
+     * @return whether the user is old enough to see the movie.
+     */
+    private static boolean isUserOfAge(Movie m, User u) {
+<span class="fc" id="L303">        LocalDate today = LocalDate.now();</span>
+<span class="fc" id="L304">        LocalDate birthdate = u.getBirthdate();</span>
+<span class="fc" id="L305">        int ageRating = m.getAgeRating();</span>
+
+<span class="fc" id="L307">        Period age = Period.between(birthdate, today);</span>
+<span class="fc bfc" id="L308" title="All 2 branches covered.">        return age.getYears() &gt;= ageRating;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.9.201702052155</span></div></body></html>

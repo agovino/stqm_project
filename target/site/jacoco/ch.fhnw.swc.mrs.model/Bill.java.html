@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Bill.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Movie Rental System</a> &gt; <a href="index.source.html" class="el_package">ch.fhnw.swc.mrs.model</a> &gt; <span class="el_source">Bill.java</span></div><h1>Bill.java</h1><pre class="source lang-java linenums">package ch.fhnw.swc.mrs.model;
+
+import java.util.List;
+
+public class Bill extends Statement {
+
+    /**
+     * Creates a bill object for a person (with the given name parameter) and a list of rentals.
+     * @param name the family name.
+     * @param firstName the first name.
+     * @param rentals a list of rentals to be billed.
+     */
+    public Bill(String name, String firstName, List&lt;Rental&gt; rentals) {
+<span class="nc" id="L14">        super(name, firstName, rentals);</span>
+<span class="nc" id="L15">    }</span>
+    
+    @Override
+    public String print() {
+<span class="nc" id="L19">        StringBuffer sb = new StringBuffer();</span>
+<span class="nc" id="L20">        sb.append(&quot;Statement\n&quot;);</span>
+<span class="nc" id="L21">        sb.append(&quot;=========\n&quot;);</span>
+<span class="nc" id="L22">        sb.append(String.format(&quot;for: %s %s\n\n&quot;, getFirstName(), getLastName()));</span>
+<span class="nc" id="L23">        sb.append(&quot;Days   Price  Title\n&quot;);</span>
+<span class="nc" id="L24">        sb.append(&quot;-------------------\n&quot;);</span>
+<span class="nc bnc" id="L25" title="All 2 branches missed.">        for (Rental r: getRentals()) {</span>
+<span class="nc" id="L26">            long days = r.getRentalDays();</span>
+<span class="nc" id="L27">            double price = r.getRentalFee();</span>
+<span class="nc" id="L28">            String title = r.getMovie().getTitle();</span>
+<span class="nc" id="L29">            sb.append(String.format(&quot;%4d  %6.2f  %s\n&quot;, days, price, title));</span>
+        }
+<span class="nc" id="L31">        return sb.toString();</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.9.201702052155</span></div></body></html>

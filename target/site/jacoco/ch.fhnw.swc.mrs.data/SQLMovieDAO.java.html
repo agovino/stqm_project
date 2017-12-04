@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SQLMovieDAO.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Movie Rental System</a> &gt; <a href="index.source.html" class="el_package">ch.fhnw.swc.mrs.data</a> &gt; <span class="el_source">SQLMovieDAO.java</span></div><h1>SQLMovieDAO.java</h1><pre class="source lang-java linenums">package ch.fhnw.swc.mrs.data;
+
+import java.sql.Connection;
+import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.time.LocalDate;
+import java.util.LinkedList;
+import java.util.List;
+
+import ch.fhnw.swc.mrs.model.Movie;
+import ch.fhnw.swc.mrs.model.PriceCategory;
+
+/**
+ * SQL access to data.
+ */
+public class SQLMovieDAO extends AbstractDAO implements MovieDAO {
+    /** SQL statement to delete movie. */
+    private static final String DELETE_SQL = &quot;DELETE FROM movies WHERE id = ?&quot;;
+    /** SQL statement to create movie. */
+    private static final String INSERT_SQL = 
+            &quot;INSERT INTO movies (title, isrented, releasedate, pricecategory, agerating)&quot;
+            + &quot;  VALUES (?, ?, ?, ?, ?)&quot;;
+    /** SQL statement to update movie. */
+    private static final String UPDATE_SQL = &quot;UPDATE movies &quot;
+            + &quot;SET title = ?, isrented = ?, releasedate = ?, pricecategory = ? , agerating = ?&quot; + &quot;WHERE id = ?&quot;;
+    /** select clause of queries. */
+    private static final String SELECT_CLAUSE = &quot;SELECT id, title, isrented, releasedate, pricecategory, agerating &quot;
+            + &quot;  FROM movies &quot;;
+    /** SQL statement to get movie by id. */
+    private static final String GET_BY_ID_SQL = SELECT_CLAUSE + &quot; WHERE id = ?&quot;;
+    /** SQL statement to get movie by name. */
+    private static final String GET_BY_TITLE_SQL = SELECT_CLAUSE + &quot; WHERE title = ?&quot;;
+    /** SQL statement to get all movies. */
+    private static final String GET_ALL_SQL = SELECT_CLAUSE;
+    /** SQL statement to get all movies of a given rented status. */
+    private static final String GET_ALL_RENTED_SQL = SELECT_CLAUSE + &quot; WHERE isrented = ?&quot;;
+
+    /**
+     * Create a new DAO which uses the given connection.
+     * 
+     * @param c connection.
+     */
+    public SQLMovieDAO(Connection c) {
+<span class="nc" id="L47">        super(c);</span>
+<span class="nc" id="L48">    }</span>
+
+    @Override
+    public void delete(Movie movie) {
+        try {
+<span class="nc" id="L53">            PreparedStatement ps = getConnection().prepareStatement(DELETE_SQL);</span>
+<span class="nc" id="L54">            ps.setInt(1, movie.getId());</span>
+<span class="nc" id="L55">            ps.execute();</span>
+<span class="nc" id="L56">            ps.close();</span>
+<span class="nc" id="L57">        } catch (SQLException e) {</span>
+<span class="nc" id="L58">            throw new RuntimeException(e);</span>
+        }
+<span class="nc" id="L60">    }</span>
+
+    /**
+     * Read a single movie object from database.
+     * 
+     * @param r Cursor into result set.
+     * @return a movie object
+     * @throws SQLException in case of any problem
+     */
+    private Movie readMovie(ResultSet r) throws SQLException {
+<span class="nc" id="L70">        String title = r.getString(&quot;Title&quot;);</span>
+<span class="nc" id="L71">        boolean isrented = r.getBoolean(&quot;IsRented&quot;);</span>
+<span class="nc" id="L72">        LocalDate date = r.getDate(&quot;ReleaseDate&quot;).toLocalDate();</span>
+<span class="nc" id="L73">        int i = r.getInt(&quot;Id&quot;);</span>
+<span class="nc" id="L74">        String pc = r.getString(&quot;PriceCategory&quot;);</span>
+<span class="nc" id="L75">        PriceCategory cat = PriceCategory.getPriceCategoryFromId(pc);</span>
+<span class="nc" id="L76">        Movie m = new Movie(title, date, cat, 0);</span>
+<span class="nc" id="L77">        m.setId(i);</span>
+<span class="nc" id="L78">        m.setRented(isrented);</span>
+<span class="nc" id="L79">        m.setAgeRating(r.getInt(&quot;agerating&quot;));</span>
+<span class="nc" id="L80">        return m;</span>
+    }
+
+    @Override
+    public List&lt;Movie&gt; getAll() {
+        try {
+<span class="nc" id="L86">            PreparedStatement ps = getConnection().prepareStatement(GET_ALL_SQL);</span>
+<span class="nc" id="L87">            return getAll(ps);</span>
+<span class="nc" id="L88">        } catch (Exception e) {</span>
+<span class="nc" id="L89">            throw new RuntimeException(e);</span>
+        }
+    }
+
+    @Override
+    public List&lt;Movie&gt; getAll(boolean rented) {
+        try {
+<span class="nc" id="L96">            PreparedStatement ps = getConnection().prepareStatement(GET_ALL_RENTED_SQL);</span>
+<span class="nc" id="L97">            ps.setBoolean(1, rented);</span>
+<span class="nc" id="L98">            return getAll(ps);</span>
+<span class="nc" id="L99">        } catch (Exception e) {</span>
+<span class="nc" id="L100">            throw new RuntimeException(e);</span>
+        }
+    }
+
+    private List&lt;Movie&gt; getAll(PreparedStatement ps) throws Exception {
+<span class="nc" id="L105">        List&lt;Movie&gt; result = new LinkedList&lt;Movie&gt;();</span>
+<span class="nc" id="L106">        ResultSet r = ps.executeQuery();</span>
+<span class="nc bnc" id="L107" title="All 2 branches missed.">        while (r.next()) {</span>
+<span class="nc" id="L108">            Movie m = readMovie(r);</span>
+<span class="nc" id="L109">            result.add(m);</span>
+        }
+<span class="nc" id="L111">        r.close();</span>
+<span class="nc" id="L112">        ps.close();</span>
+<span class="nc" id="L113">        return result;</span>
+    }
+
+    @Override
+    public Movie getById(int id) {
+        try {
+<span class="nc" id="L119">            Movie result = null;</span>
+<span class="nc" id="L120">            PreparedStatement ps = getConnection().prepareStatement(GET_BY_ID_SQL);</span>
+<span class="nc" id="L121">            ps.setInt(1, id);</span>
+<span class="nc" id="L122">            ResultSet r = ps.executeQuery();</span>
+<span class="nc bnc" id="L123" title="All 2 branches missed.">            if (r.next()) {</span>
+<span class="nc" id="L124">                result = readMovie(r);</span>
+            }
+<span class="nc" id="L126">            r.close();</span>
+<span class="nc" id="L127">            ps.close();</span>
+<span class="nc" id="L128">            return result;</span>
+<span class="nc" id="L129">        } catch (SQLException e) {</span>
+<span class="nc" id="L130">            throw new RuntimeException(e);</span>
+        }
+    }
+
+    @Override
+    public List&lt;Movie&gt; getByTitle(String title) {
+        try {
+<span class="nc" id="L137">            List&lt;Movie&gt; result = new LinkedList&lt;Movie&gt;();</span>
+<span class="nc" id="L138">            PreparedStatement ps = getConnection().prepareStatement(GET_BY_TITLE_SQL);</span>
+<span class="nc" id="L139">            ps.setString(1, title);</span>
+<span class="nc" id="L140">            ResultSet r = ps.executeQuery();</span>
+<span class="nc bnc" id="L141" title="All 2 branches missed.">            while (r.next()) {</span>
+<span class="nc" id="L142">                result.add(readMovie(r));</span>
+            }
+<span class="nc" id="L144">            r.close();</span>
+<span class="nc" id="L145">            ps.close();</span>
+<span class="nc" id="L146">            return result;</span>
+<span class="nc" id="L147">        } catch (SQLException e) {</span>
+<span class="nc" id="L148">            throw new RuntimeException(e);</span>
+        }
+    }
+
+    @Override
+    public void saveOrUpdate(Movie movie) {
+        try {
+<span class="nc" id="L155">            PreparedStatement ps = getConnection().prepareStatement(GET_BY_ID_SQL);</span>
+<span class="nc" id="L156">            ps.setInt(1, movie.getId());</span>
+<span class="nc" id="L157">            ResultSet r = ps.executeQuery();</span>
+            PreparedStatement writeStmt;
+<span class="nc" id="L159">            boolean isUpdate = r.next();</span>
+<span class="nc" id="L160">            int paramcount = 1;</span>
+<span class="nc bnc" id="L161" title="All 2 branches missed.">            if (isUpdate) { // there exists already a movie with this id =&gt; UPDATE</span>
+<span class="nc" id="L162">                writeStmt = getConnection().prepareStatement(UPDATE_SQL);</span>
+<span class="nc" id="L163">            } else {</span>
+<span class="nc" id="L164">                writeStmt = getConnection().prepareStatement(INSERT_SQL, Statement.RETURN_GENERATED_KEYS);</span>
+            }
+<span class="nc" id="L166">            writeStmt.setString(paramcount++, movie.getTitle());</span>
+<span class="nc" id="L167">            writeStmt.setBoolean(paramcount++, movie.isRented());</span>
+<span class="nc" id="L168">            Date d = Date.valueOf(movie.getReleaseDate());</span>
+<span class="nc" id="L169">            writeStmt.setDate(paramcount++, d);</span>
+<span class="nc" id="L170">            writeStmt.setString(paramcount++, movie.getPriceCategory().toString());</span>
+<span class="nc" id="L171">            writeStmt.setInt(paramcount++, movie.getAgeRating());</span>
+<span class="nc bnc" id="L172" title="All 2 branches missed.">            if (isUpdate) {</span>
+<span class="nc" id="L173">                writeStmt.setInt(paramcount, movie.getId());</span>
+            }
+<span class="nc" id="L175">            writeStmt.executeUpdate();</span>
+<span class="nc" id="L176">            getConnection().commit();</span>
+<span class="nc bnc" id="L177" title="All 2 branches missed.">            if (!isUpdate) {</span>
+<span class="nc" id="L178">                r = writeStmt.getGeneratedKeys();</span>
+<span class="nc bnc" id="L179" title="All 2 branches missed.">                if (r.next()) {</span>
+<span class="nc" id="L180">                    movie.setId(r.getInt(1));</span>
+                }
+            }
+<span class="nc" id="L183">            writeStmt.close();</span>
+<span class="nc" id="L184">            r.close();</span>
+<span class="nc" id="L185">            ps.close();</span>
+<span class="nc" id="L186">        } catch (SQLException e) {</span>
+<span class="nc" id="L187">            throw new RuntimeException(e);</span>
+        }
+<span class="nc" id="L189">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.9.201702052155</span></div></body></html>

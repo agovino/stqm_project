@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RentMovieController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Movie Rental System</a> &gt; <a href="index.source.html" class="el_package">ch.fhnw.swc.mrs.view</a> &gt; <span class="el_source">RentMovieController.java</span></div><h1>RentMovieController.java</h1><pre class="source lang-java linenums">package ch.fhnw.swc.mrs.view;
+
+import java.time.LocalDate;
+import java.util.List;
+
+import ch.fhnw.swc.mrs.model.MRSServices;
+import ch.fhnw.swc.mrs.model.Movie;
+import ch.fhnw.swc.mrs.model.PriceCategory;
+import ch.fhnw.swc.mrs.model.User;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.fxml.FXML;
+import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
+
+/** Java FX controller class for rent movies tab. */
+<span class="nc" id="L21">public class RentMovieController implements MRSServiceUtilizer {</span>
+  @FXML
+  private TableView&lt;Movie&gt; availableMoviesTable;
+  @FXML
+  private TableColumn&lt;Movie, Number&gt; idColumn;
+  @FXML
+  private TableColumn&lt;Movie, String&gt; titleColumn;
+  @FXML
+  private TableColumn&lt;Movie, LocalDate&gt; releaseDateColumn;
+  @FXML
+  private TableColumn&lt;Movie, PriceCategory&gt; priceCategoryColumn;
+  @FXML
+  private TextField idField;
+  @FXML
+  private TextField surnameField;
+  @FXML
+  private TextField firstnameField;
+  @FXML
+  private DatePicker birthdatePicker;
+  @FXML
+  private DatePicker rentalDatePicker;
+  @FXML
+  private CheckBox newUser;
+  @FXML
+  private Button getUserButton;
+  @FXML
+  private Button clearAllButton;
+  @FXML
+  private Button saveButton;
+
+  private MRSServices backend;
+<span class="nc" id="L52">  private ObservableList&lt;Movie&gt; rentMovieList = FXCollections.observableArrayList();</span>
+<span class="nc" id="L53">  private User found = null;</span>
+
+  /**
+   * Initializes the controller class. This method is automatically called after the fxml file has
+   * been loaded.
+   */
+  @FXML
+  private void initialize() {
+    // Initialize the movie table.
+<span class="nc" id="L62">    idColumn.setCellValueFactory(cellData -&gt; cellData.getValue().idProperty());</span>
+<span class="nc" id="L63">    titleColumn.setCellValueFactory(cellData -&gt; cellData.getValue().titleProperty());</span>
+<span class="nc" id="L64">    releaseDateColumn.setCellValueFactory(cellData -&gt; cellData.getValue().releaseDateProperty());</span>
+<span class="nc" id="L65">    priceCategoryColumn.setCellValueFactory(cellData -&gt; cellData.getValue().priceCategoryProperty());</span>
+<span class="nc" id="L66">    availableMoviesTable.getSelectionModel().selectedItemProperty().addListener(</span>
+<span class="nc" id="L67">        (observable, oldValue, newValue) -&gt; handleSelectionChange(oldValue, newValue));</span>
+<span class="nc" id="L68">  }</span>
+
+  @Override
+  public void setServiceProvider(MRSServices provider) {
+<span class="nc" id="L72">    backend = provider;</span>
+<span class="nc" id="L73">  }</span>
+
+  @Override
+  public void reload() {
+<span class="nc" id="L77">    rentMovieList.clear();</span>
+<span class="nc" id="L78">    List&lt;Movie&gt; movies = backend.getAllMovies(false);</span>
+<span class="nc bnc" id="L79" title="All 2 branches missed.">    for (Movie m : movies) {</span>
+<span class="nc" id="L80">      rentMovieList.add(m);</span>
+    }
+<span class="nc" id="L82">    availableMoviesTable.setItems(rentMovieList);</span>
+<span class="nc" id="L83">  }</span>
+
+  @FXML
+  private void handleNewUser() {
+<span class="nc bnc" id="L87" title="All 2 branches missed.">    if (newUser.isSelected()) {</span>
+<span class="nc" id="L88">      setNewUserEnabling();</span>
+<span class="nc" id="L89">    } else {</span>
+<span class="nc" id="L90">      setReadyEnabling();</span>
+    }
+<span class="nc" id="L92">    clearAllFields();</span>
+<span class="nc" id="L93">    surnameField.requestFocus();</span>
+<span class="nc" id="L94">  }</span>
+
+  private void setReadyEnabling() {
+<span class="nc" id="L97">    newUser.setDisable(false);</span>
+<span class="nc" id="L98">    getUserButton.setDisable(false);</span>
+<span class="nc" id="L99">    saveButton.setDisable(true);</span>
+<span class="nc" id="L100">    idField.setDisable(false);</span>
+<span class="nc" id="L101">    surnameField.setDisable(false);</span>
+<span class="nc" id="L102">    firstnameField.setDisable(true);</span>
+<span class="nc" id="L103">    birthdatePicker.setDisable(true);</span>
+<span class="nc" id="L104">    rentalDatePicker.setDisable(true);</span>
+<span class="nc" id="L105">  }</span>
+
+  private void setNewUserEnabling() {
+<span class="nc" id="L108">    newUser.setDisable(false);</span>
+<span class="nc" id="L109">    getUserButton.setDisable(true);</span>
+<span class="nc" id="L110">    saveButton.setDisable(false);</span>
+<span class="nc" id="L111">    idField.setDisable(true);</span>
+<span class="nc" id="L112">    surnameField.setDisable(false);</span>
+<span class="nc" id="L113">    firstnameField.setDisable(false);</span>
+<span class="nc" id="L114">    birthdatePicker.setDisable(false);</span>
+<span class="nc" id="L115">    rentalDatePicker.setDisable(false);</span>
+<span class="nc" id="L116">  }</span>
+  
+  private void clearAllFields() {
+<span class="nc" id="L119">    surnameField.clear();</span>
+<span class="nc" id="L120">    firstnameField.clear();</span>
+<span class="nc" id="L121">    idField.clear();</span>
+<span class="nc" id="L122">    rentalDatePicker.setValue(null);</span>
+<span class="nc" id="L123">    birthdatePicker.setValue(null);    </span>
+<span class="nc" id="L124">  }</span>
+
+  @FXML
+  private void handleClearAll() {
+<span class="nc" id="L128">    newUser.setSelected(false);</span>
+<span class="nc" id="L129">    setReadyEnabling();</span>
+<span class="nc" id="L130">    clearAllFields();</span>
+<span class="nc" id="L131">  }</span>
+
+  @FXML
+  private void handleGetUser() {
+<span class="nc" id="L135">    String username = surnameField.getText();</span>
+<span class="nc" id="L136">    String idstring = idField.getText();</span>
+    try {
+<span class="nc" id="L138">      int id = Integer.parseInt(idstring);</span>
+<span class="nc" id="L139">      found = backend.getUserById(id);</span>
+<span class="nc" id="L140">    } catch (NumberFormatException e) {</span>
+<span class="nc" id="L141">      found = backend.getUserByName(username);</span>
+    }
+<span class="nc bnc" id="L143" title="All 2 branches missed.">    if (found != null) {</span>
+<span class="nc" id="L144">      idField.setText(Integer.toString(found.getId()));</span>
+<span class="nc" id="L145">      surnameField.setText(found.getName());</span>
+<span class="nc" id="L146">      firstnameField.setText(found.getFirstName());</span>
+<span class="nc" id="L147">      birthdatePicker.setValue(found.getBirthdate());</span>
+<span class="nc" id="L148">      rentalDatePicker.setValue(LocalDate.now());</span>
+<span class="nc" id="L149">      idField.setDisable(true);</span>
+<span class="nc" id="L150">      surnameField.setDisable(true);</span>
+<span class="nc" id="L151">    } else {</span>
+<span class="nc" id="L152">      idField.setText(null);</span>
+<span class="nc" id="L153">      surnameField.setText(null);</span>
+<span class="nc" id="L154">      firstnameField.setText(null);</span>
+<span class="nc" id="L155">      surnameField.requestFocus();</span>
+    }
+<span class="nc" id="L157">  }</span>
+
+  @FXML
+  private void handleSave() {
+<span class="nc" id="L161">    Movie m = availableMoviesTable.getSelectionModel().getSelectedItem();</span>
+<span class="nc" id="L162">    backend.createRental(found, m);</span>
+<span class="nc" id="L163">    reload();</span>
+<span class="nc" id="L164">    handleClearAll();</span>
+<span class="nc" id="L165">  }</span>
+  
+  @FXML
+  private void enterPressed() {
+<span class="nc bnc" id="L169" title="All 4 branches missed.">    if (newUser.isSelected() &amp;&amp; !saveButton.isDisabled()) { // enter means save</span>
+<span class="nc" id="L170">      handleSave();</span>
+<span class="nc" id="L171">    } else { // enter means get User</span>
+<span class="nc" id="L172">      handleGetUser();</span>
+    }
+<span class="nc" id="L174">  }</span>
+
+  private void handleSelectionChange(Movie oldMovie, Movie newMovie) {
+<span class="nc bnc" id="L177" title="All 2 branches missed.">    saveButton.setDisable(newMovie == null);</span>
+<span class="nc" id="L178">  }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.9.201702052155</span></div></body></html>

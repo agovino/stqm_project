@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MovieController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Movie Rental System</a> &gt; <a href="index.source.html" class="el_package">ch.fhnw.swc.mrs.view</a> &gt; <span class="el_source">MovieController.java</span></div><h1>MovieController.java</h1><pre class="source lang-java linenums">package ch.fhnw.swc.mrs.view;
+
+import java.time.LocalDate;
+import java.util.List;
+
+import ch.fhnw.swc.mrs.model.ChildrenPriceCategory;
+import ch.fhnw.swc.mrs.model.MRSServices;
+import ch.fhnw.swc.mrs.model.Movie;
+import ch.fhnw.swc.mrs.model.NewReleasePriceCategory;
+import ch.fhnw.swc.mrs.model.PriceCategory;
+import ch.fhnw.swc.mrs.model.RegularPriceCategory;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.fxml.FXML;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.GridPane;
+
+/**
+ * Java FX controller class for Movies.
+ */
+<span class="nc" id="L26">public class MovieController implements MRSServiceUtilizer {</span>
+  @FXML
+  private TableView&lt;Movie&gt; movieTable;
+  @FXML
+  private TableColumn&lt;Movie, Number&gt; idColumn;
+  @FXML
+  private TableColumn&lt;Movie, String&gt; titleColumn;
+  @FXML
+  private TableColumn&lt;Movie, LocalDate&gt; releaseDateColumn;
+  @FXML
+  private TableColumn&lt;Movie, Number&gt; ageRatingColumn;
+  @FXML
+  private TableColumn&lt;Movie, PriceCategory&gt; priceCategoryColumn;
+  @FXML
+  private GridPane grid;
+  @FXML
+  private TextField titleField;
+  @FXML
+  private DatePicker releaseDatePicker;
+  @FXML
+  private ComboBox&lt;PriceCategory&gt; priceCategoryChooser;
+  @FXML
+  private ComboBox&lt;Integer&gt; ageRatingChooser;
+  @FXML
+  private Button cancelButton;
+  @FXML
+  private Button newButton;
+  @FXML
+  private Button editButton;
+  @FXML
+  private Button deleteButton;
+  @FXML
+  private Button saveButton;
+  
+<span class="nc" id="L60">  private Movie editing = null;  // currently no movie is being edited.</span>
+  private MRSServices backend;
+<span class="nc" id="L62">  private ObservableList&lt;Movie&gt; movieList = FXCollections.observableArrayList();</span>
+
+  /**
+   * Initializes the controller class. This method is automatically called after
+   * the fxml file has been loaded.
+   */
+  @FXML
+  private void initialize() {
+    // Initialize the movie table.
+<span class="nc" id="L71">    idColumn.setCellValueFactory(cellData -&gt; cellData.getValue().idProperty());</span>
+<span class="nc" id="L72">    titleColumn.setCellValueFactory(cellData -&gt; cellData.getValue().titleProperty());</span>
+<span class="nc" id="L73">    releaseDateColumn.setCellValueFactory(cellData -&gt; cellData.getValue().releaseDateProperty());</span>
+<span class="nc" id="L74">    ageRatingColumn.setCellValueFactory(cellData -&gt; cellData.getValue().ageRatingProperty());</span>
+<span class="nc" id="L75">    priceCategoryColumn.setCellValueFactory(cellData -&gt; cellData.getValue().priceCategoryProperty());</span>
+    
+<span class="nc" id="L77">    priceCategoryChooser.getItems().addAll(</span>
+<span class="nc" id="L78">         RegularPriceCategory.getInstance(),</span>
+<span class="nc" id="L79">         ChildrenPriceCategory.getInstance(),</span>
+<span class="nc" id="L80">         NewReleasePriceCategory.getInstance());</span>
+    
+<span class="nc" id="L82">    ageRatingChooser.getItems().addAll(0, 6, 12, 14, 16, 18);</span>
+    
+<span class="nc" id="L84">    movieTable.getSelectionModel().selectedItemProperty().addListener(</span>
+<span class="nc" id="L85">        (observable, oldValue, newValue) -&gt; handleSelectionChange(oldValue, newValue));</span>
+    
+<span class="nc" id="L87">    grid.setDisable(true);</span>
+<span class="nc" id="L88">    showMovieDetails(null);</span>
+<span class="nc" id="L89">  }</span>
+  
+  private Object handleSelectionChange(Movie oldValue, Movie newValue) {
+<span class="nc" id="L92">    handleCancel();</span>
+<span class="nc bnc" id="L93" title="All 2 branches missed.">    if (newValue != null) {</span>
+<span class="nc" id="L94">      editButton.setDisable(false);</span>
+<span class="nc" id="L95">      deleteButton.setDisable(false);</span>
+    }
+<span class="nc" id="L97">    return null;</span>
+  }
+
+  private void showMovieDetails(Movie movie) {
+<span class="nc bnc" id="L101" title="All 2 branches missed.">    if (movie != null) {</span>
+      // fill the labels with info from the Movie object
+<span class="nc" id="L103">      titleField.setText(movie.getTitle());</span>
+<span class="nc" id="L104">      releaseDatePicker.setValue(movie.getReleaseDate());</span>
+<span class="nc" id="L105">      priceCategoryChooser.setValue(movie.getPriceCategory());</span>
+<span class="nc" id="L106">      ageRatingChooser.setValue(movie.getAgeRating());</span>
+<span class="nc" id="L107">    } else {</span>
+      // clear the content and set default values
+<span class="nc" id="L109">      titleField.setText(&quot;&quot;);</span>
+<span class="nc" id="L110">      releaseDatePicker.setValue(null);</span>
+<span class="nc" id="L111">      priceCategoryChooser.setValue(null);</span>
+<span class="nc" id="L112">      ageRatingChooser.setValue(null);</span>
+    }
+<span class="nc" id="L114">  }</span>
+  
+  @FXML
+  private void handleCancel() {
+<span class="nc" id="L118">    cancelButton.setDisable(true);</span>
+<span class="nc" id="L119">    newButton.setDisable(false);</span>
+<span class="nc" id="L120">    editButton.setDisable(true);</span>
+<span class="nc" id="L121">    deleteButton.setDisable(true);</span>
+<span class="nc" id="L122">    saveButton.setDisable(true);</span>
+<span class="nc" id="L123">    showMovieDetails(null);</span>
+<span class="nc" id="L124">    titleField.setEditable(false);</span>
+<span class="nc" id="L125">    releaseDatePicker.setEditable(false);</span>
+<span class="nc" id="L126">    grid.setDisable(true);</span>
+<span class="nc" id="L127">    editing = null;</span>
+<span class="nc" id="L128">  }</span>
+  
+  @FXML
+  private void handleNew() {
+<span class="nc" id="L132">    cancelButton.setDisable(false);</span>
+<span class="nc" id="L133">    newButton.setDisable(true);</span>
+<span class="nc" id="L134">    editButton.setDisable(true);</span>
+<span class="nc" id="L135">    deleteButton.setDisable(true);</span>
+<span class="nc" id="L136">    saveButton.setDisable(false);</span>
+<span class="nc" id="L137">    showMovieDetails(null);</span>
+<span class="nc" id="L138">    titleField.setEditable(true);</span>
+<span class="nc" id="L139">    releaseDatePicker.setEditable(true);</span>
+<span class="nc" id="L140">    grid.setDisable(false);</span>
+<span class="nc" id="L141">    titleField.requestFocus();</span>
+<span class="nc" id="L142">    editing = null;</span>
+<span class="nc" id="L143">  }</span>
+  
+  @FXML
+  private void handleSave() {
+<span class="nc bnc" id="L147" title="All 2 branches missed.">    if (editing == null) {</span>
+<span class="nc" id="L148">      Movie m = new Movie(titleField.getText(),</span>
+<span class="nc" id="L149">                          releaseDatePicker.getValue(),</span>
+<span class="nc" id="L150">                          priceCategoryChooser.getValue(),</span>
+<span class="nc" id="L151">                          ageRatingChooser.getValue());</span>
+<span class="nc" id="L152">      m = backend.createMovie(m);</span>
+<span class="nc" id="L153">      movieTable.getItems().add(m);</span>
+<span class="nc" id="L154">    } else {</span>
+<span class="nc" id="L155">      editing.setTitle(titleField.getText());</span>
+<span class="nc" id="L156">      editing.setReleaseDate(releaseDatePicker.getValue());</span>
+<span class="nc" id="L157">      editing.setPriceCategory(priceCategoryChooser.getValue());</span>
+<span class="nc" id="L158">      editing.setAgeRating(ageRatingChooser.getValue());</span>
+<span class="nc" id="L159">      backend.updateMovie(editing);</span>
+    }
+<span class="nc" id="L161">    handleCancel();</span>
+<span class="nc" id="L162">  }</span>
+  
+  @FXML
+  private void handleEdit() {
+<span class="nc" id="L166">    cancelButton.setDisable(false);</span>
+<span class="nc" id="L167">    newButton.setDisable(true);</span>
+<span class="nc" id="L168">    editButton.setDisable(true);</span>
+<span class="nc" id="L169">    deleteButton.setDisable(true);</span>
+<span class="nc" id="L170">    saveButton.setDisable(false);</span>
+<span class="nc" id="L171">    Movie m = movieTable.getSelectionModel().getSelectedItem();</span>
+<span class="nc" id="L172">    showMovieDetails(m);</span>
+<span class="nc" id="L173">    titleField.setEditable(true);</span>
+<span class="nc" id="L174">    releaseDatePicker.setEditable(true);</span>
+<span class="nc" id="L175">    grid.setDisable(false); </span>
+<span class="nc" id="L176">    titleField.requestFocus();</span>
+<span class="nc" id="L177">    editing = m;</span>
+<span class="nc" id="L178">  }</span>
+  
+  @FXML
+  private void handleDelete() {
+<span class="nc" id="L182">    cancelButton.setDisable(true);</span>
+<span class="nc" id="L183">    newButton.setDisable(false);</span>
+<span class="nc" id="L184">    editButton.setDisable(true);</span>
+<span class="nc" id="L185">    deleteButton.setDisable(true);</span>
+<span class="nc" id="L186">    saveButton.setDisable(true);</span>
+<span class="nc" id="L187">    Movie m = movieTable.getSelectionModel().getSelectedItem();</span>
+<span class="nc bnc" id="L188" title="All 2 branches missed.">    if (backend.deleteMovie(m)) {</span>
+<span class="nc" id="L189">      movieTable.getItems().remove(m);</span>
+<span class="nc" id="L190">      movieTable.getSelectionModel().clearSelection();</span>
+    }
+<span class="nc" id="L192">    showMovieDetails(null);</span>
+<span class="nc" id="L193">    titleField.setEditable(false);</span>
+<span class="nc" id="L194">    releaseDatePicker.setEditable(false);</span>
+<span class="nc" id="L195">    grid.setDisable(true);</span>
+<span class="nc" id="L196">    editing = null;</span>
+<span class="nc" id="L197">  }</span>
+  
+  @Override
+  public void setServiceProvider(MRSServices provider) {
+<span class="nc" id="L201">    backend = provider;</span>
+<span class="nc" id="L202">  }</span>
+
+  @Override
+  public void reload() {
+<span class="nc" id="L206">    movieList.clear();</span>
+<span class="nc" id="L207">    List&lt;Movie&gt; movies = backend.getAllMovies();</span>
+<span class="nc bnc" id="L208" title="All 2 branches missed.">    for (Movie m : movies) {</span>
+<span class="nc" id="L209">      movieList.add(m);</span>
+    }
+<span class="nc" id="L211">    movieTable.setItems(movieList);</span>
+<span class="nc" id="L212">  }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.9.201702052155</span></div></body></html>

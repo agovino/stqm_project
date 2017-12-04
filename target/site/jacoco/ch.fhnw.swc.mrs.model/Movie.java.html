@@ -1,0 +1,312 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Movie.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Movie Rental System</a> &gt; <a href="index.source.html" class="el_package">ch.fhnw.swc.mrs.model</a> &gt; <span class="el_source">Movie.java</span></div><h1>Movie.java</h1><pre class="source lang-java linenums"><span class="fc" id="L1">package ch.fhnw.swc.mrs.model;</span>
+
+import java.time.LocalDate;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+
+/**
+ * Represents a movie.
+ * 
+ */
+public class Movie {
+
+<span class="fc" id="L23">  private final IntegerProperty id = new SimpleIntegerProperty(0);</span>
+<span class="fc" id="L24">  private final BooleanProperty rented = new SimpleBooleanProperty(false);</span>
+
+<span class="fc" id="L26">  private final StringProperty title = new SimpleStringProperty(&quot;Untitled&quot;) {</span>
+    @Override public void set(String aTitle) {
+<span class="fc" id="L28">      log.trace(&quot;entering title property setter.&quot;);</span>
+<span class="pc bpc" id="L29" title="1 of 4 branches missed.">      if (aTitle == null || aTitle.trim().isEmpty()) {</span>
+<span class="fc" id="L30">        log.trace(&quot;Illegal argument. Throwing exception&quot;);</span>
+<span class="fc" id="L31">        throw new IllegalArgumentException(&quot;Title must not be null nor emtpy&quot;);</span>
+      }
+<span class="fc" id="L33">      super.set(aTitle);</span>
+<span class="fc" id="L34">      log.trace(&quot;exiting title property setter.&quot;);</span>
+<span class="fc" id="L35">    }</span>
+  };
+  
+<span class="fc" id="L38">  private final ObjectProperty&lt;LocalDate&gt; releaseDate = new SimpleObjectProperty&lt;LocalDate&gt;() {</span>
+    @Override public void set(LocalDate aReleaseDate) {
+<span class="fc" id="L40">      log.trace(&quot;entering releaseDate property setter&quot;);</span>
+<span class="fc bfc" id="L41" title="All 2 branches covered.">      if (aReleaseDate == null) {</span>
+<span class="fc" id="L42">        log.trace(&quot;exiting abruptly releaseDate property setter&quot;);</span>
+<span class="fc" id="L43">        throw new IllegalArgumentException(&quot;Release date must not be null&quot;);</span>
+      }
+<span class="fc" id="L45">      super.set(aReleaseDate);</span>
+<span class="fc" id="L46">      log.trace(&quot;exiting releaseDate property setter&quot;); </span>
+<span class="fc" id="L47">    }</span>
+  };
+  
+<span class="fc" id="L50">  private final IntegerProperty ageRating = new SimpleIntegerProperty(0) {</span>
+    @Override public void set(int anAgeRating) {
+<span class="fc" id="L52">      log.trace(&quot;entering ageRating property setter&quot;);</span>
+<span class="fc bfc" id="L53" title="All 4 branches covered.">      if (anAgeRating &lt; 0 || anAgeRating &gt; 18) {</span>
+<span class="fc" id="L54">        log.trace(&quot;exiting abruptly ageRating property setter&quot;);</span>
+<span class="fc" id="L55">        throw new IllegalArgumentException(&quot;age rating must be in range [0, 18]&quot;);</span>
+      }
+<span class="fc" id="L57">      super.set(anAgeRating);      </span>
+<span class="fc" id="L58">      log.trace(&quot;exiting ageRating property setter&quot;); </span>
+<span class="fc" id="L59">    }</span>
+  };
+
+  /** the rental cost of the movie. */
+<span class="fc" id="L63">  private ObjectProperty&lt;PriceCategory&gt; priceCategory = new SimpleObjectProperty&lt;PriceCategory&gt;() {</span>
+    @Override public void set(PriceCategory aCategory) {
+<span class="fc" id="L65">      log.trace(&quot;entering priceCategory property setter&quot;);</span>
+<span class="fc bfc" id="L66" title="All 2 branches covered.">      if (aCategory == null) {</span>
+<span class="fc" id="L67">        log.trace(&quot;exiting abruptly ageRating property setter&quot;);</span>
+<span class="fc" id="L68">        throw new IllegalArgumentException(&quot;price category must not be null&quot;);</span>
+      }
+<span class="fc" id="L70">      super.set(aCategory);</span>
+<span class="fc" id="L71">      log.trace(&quot;exiting ageRating property setter&quot;);</span>
+<span class="fc" id="L72">    }</span>
+  };
+
+  /** Logger used to produce logs. */
+<span class="fc" id="L76">  private static Logger log = LogManager.getLogger();</span>
+
+  /** Ctor only for testing needed. */
+  protected Movie() {
+<span class="fc" id="L80">    this(&quot;Untitled&quot;, LocalDate.now(), RegularPriceCategory.getInstance(), 0);</span>
+<span class="fc" id="L81">    log.warn(&quot;Protected constructor of Movie class should not be called in production mode&quot;);</span>
+<span class="fc" id="L82">  }</span>
+
+  /**
+   * @param aTitle none.
+   * @param aReleaseDate none.
+   * @param aPriceCategory none.
+   * @param anAgeRating none.
+   */
+<span class="fc" id="L90">  public Movie(String aTitle, LocalDate aReleaseDate, PriceCategory aPriceCategory, int anAgeRating) {</span>
+<span class="fc" id="L91">    log.trace(&quot;entering Movie(String, Date, PriceCategory, int)&quot;);</span>
+<span class="fc" id="L92">    title.set(aTitle);</span>
+<span class="fc" id="L93">    releaseDate.set(aReleaseDate);</span>
+<span class="fc" id="L94">    priceCategory.set(aPriceCategory);</span>
+<span class="fc" id="L95">    ageRating.set(anAgeRating);</span>
+<span class="fc" id="L96">    log.trace(&quot;exiting Movie(String, Date, PriceCategory, int)&quot;);</span>
+<span class="fc" id="L97">  }</span>
+
+  /**
+   * @return unique identification number of this Movie.
+   */
+  public Integer getId() {
+<span class="fc" id="L103">    log.trace(&quot;in getId&quot;);</span>
+<span class="fc" id="L104">    return id.get();</span>
+  }
+
+  /**
+   * @param anId set an unique identification number for this Movie.
+   */
+  public void setId(Integer anId) {
+<span class="fc" id="L111">    log.trace(&quot;entering setId&quot;);</span>
+<span class="fc" id="L112">    this.id.set(anId);</span>
+<span class="fc" id="L113">    log.trace(&quot;exiting setId&quot;);</span>
+<span class="fc" id="L114">  }</span>
+
+  /**  @return Java FX property for unique identification number. */
+  public IntegerProperty idProperty() {
+<span class="nc" id="L118">    return id;</span>
+  }
+
+  /**
+   * @return The title of this Movie.
+   */
+  public String getTitle() {
+<span class="fc" id="L125">    log.trace(&quot;in getTitle&quot;);</span>
+<span class="fc" id="L126">    return title.get();</span>
+  }
+
+  /**
+   * @param aTitle set the title of this Movie.
+   */
+  public void setTitle(String aTitle) {
+<span class="fc" id="L133">    log.trace(&quot;entering setTitle&quot;);</span>
+<span class="fc" id="L134">    title.set(aTitle);</span>
+<span class="fc" id="L135">    log.trace(&quot;exiting setTitle&quot;);</span>
+<span class="fc" id="L136">  }</span>
+
+  /** @return Java FX property for title. */
+  public StringProperty titleProperty() {
+<span class="nc" id="L140">    log.trace(&quot;in titleProperty&quot;);</span>
+<span class="nc" id="L141">    return title;</span>
+  }
+
+  /**
+   * @return whether this Movie is rented to a User.
+   */
+  public boolean isRented() {
+<span class="fc" id="L148">    log.trace(&quot;in isRented&quot;);</span>
+<span class="fc" id="L149">    return rented.get();</span>
+  }
+
+  /**
+   * @param isRented set the rented status.
+   */
+  public void setRented(boolean isRented) {
+<span class="fc" id="L156">    log.trace(&quot;entering setRented&quot;);</span>
+<span class="fc" id="L157">    rented.set(isRented);</span>
+<span class="fc" id="L158">    log.trace(&quot;exiting setRented&quot;);</span>
+<span class="fc" id="L159">  }</span>
+
+  /** @return Java FX property for rented status. */
+  public BooleanProperty rentedProperty() {
+<span class="nc" id="L163">    return rented;</span>
+  }
+
+  /**
+   * @return the date this Movie was released.
+   */
+  public LocalDate getReleaseDate() {
+<span class="fc" id="L170">    log.trace(&quot;in getReleaseDate&quot;);</span>
+<span class="fc" id="L171">    return releaseDate.get();</span>
+  }
+
+  /**
+   * @param aReleaseDate set the date this Movie was released.
+   */
+  public void setReleaseDate(LocalDate aReleaseDate) {
+<span class="fc" id="L178">    log.trace(&quot;entering setReleaseDate&quot;);</span>
+<span class="fc" id="L179">    releaseDate.set(aReleaseDate);</span>
+<span class="fc" id="L180">    log.trace(&quot;exiting setReleaseDate&quot;);</span>
+<span class="fc" id="L181">  }</span>
+
+  /** @return Java FX property for release date. */
+  public ObjectProperty&lt;LocalDate&gt; releaseDateProperty() {
+<span class="nc" id="L185">    log.trace(&quot;in releaseDateProperty&quot;);</span>
+<span class="nc" id="L186">    return releaseDate;</span>
+  }
+
+  /**
+   * @return the minimum age to rent this movie.
+   */
+  public int getAgeRating() {
+<span class="fc" id="L193">    log.trace(&quot;in getAgeRating&quot;);</span>
+<span class="fc" id="L194">    return ageRating.get();</span>
+  }
+  
+  /** Set the minimum age to rent this movie.
+   *  @param anAgeRating must be in range [0, 18]. */
+  public void setAgeRating(int anAgeRating) {
+<span class="nc" id="L200">    log.trace(&quot;entering setAgeRating&quot;);</span>
+<span class="nc" id="L201">    ageRating.set(anAgeRating);</span>
+<span class="nc" id="L202">    log.trace(&quot;exiting setAgeRating&quot;);</span>
+<span class="nc" id="L203">  }</span>
+  
+  /** @return Java FX property for age rating. */
+  public IntegerProperty ageRatingProperty() {
+<span class="nc" id="L207">    return ageRating;</span>
+  }
+  
+
+  /**
+   * @return PriceCategory of this Movie.
+   */
+  public PriceCategory getPriceCategory() {
+<span class="fc" id="L215">    log.trace(&quot;in getPriceCategory&quot;);</span>
+<span class="fc" id="L216">    return priceCategory.get();</span>
+  }
+
+  /**
+   * @param aPriceCategory set PriceCategory for this Movie.
+   */
+  public void setPriceCategory(PriceCategory aPriceCategory) {
+<span class="fc" id="L223">    log.trace(&quot;entering setPriceCategory&quot;);</span>
+<span class="fc" id="L224">    this.priceCategory.set(aPriceCategory);</span>
+<span class="fc" id="L225">    log.trace(&quot;exiting setPriceCategory&quot;);</span>
+<span class="fc" id="L226">  }</span>
+
+  /** @return Java FX property for PriceCategory. */
+  public ObjectProperty&lt;PriceCategory&gt; priceCategoryProperty() {
+<span class="nc" id="L230">    return priceCategory;</span>
+  }
+
+  /**
+   * @see java.lang.Object#hashCode()
+   * @return none.
+   */
+  @Override
+  public int hashCode() {
+<span class="fc" id="L239">    log.trace(&quot;entering hashCode&quot;);</span>
+<span class="fc" id="L240">    final int prime = 31;</span>
+<span class="fc" id="L241">    int result = prime + getId();</span>
+<span class="pc bpc" id="L242" title="1 of 2 branches missed.">    result = prime * result + ((getReleaseDate() == null) ? 0 : getReleaseDate().hashCode());</span>
+<span class="pc bpc" id="L243" title="1 of 2 branches missed.">    result = prime * result + ((getTitle() == null) ? 0 : getTitle().hashCode());</span>
+<span class="fc" id="L244">    log.trace(&quot;exiting hashCode&quot;);</span>
+<span class="fc" id="L245">    return result;</span>
+  }
+
+  /**
+   * @see java.lang.Object#equals(java.lang.Object)
+   * @param obj none.
+   * @return none.
+   */
+  @Override
+  public boolean equals(Object obj) {
+<span class="fc" id="L255">    log.trace(&quot;entering equals&quot;);</span>
+    // first: cheap test on identity
+<span class="fc bfc" id="L257" title="All 2 branches covered.">    if (this == obj) {</span>
+<span class="fc" id="L258">      log.trace(&quot;exiting equals (objects are the same)&quot;);</span>
+<span class="fc" id="L259">      return true;</span>
+    }
+    // second: check if its worth looking into the object
+<span class="fc bfc" id="L262" title="All 2 branches covered.">    if (!isOfSameType(obj)) {</span>
+<span class="fc" id="L263">      log.trace(&quot;exiting equals (objects are of different type)&quot;);</span>
+<span class="fc" id="L264">      return false;</span>
+    }
+    // third: check equality on each attribute of the object
+<span class="fc" id="L267">    Movie m = (Movie) obj;</span>
+<span class="fc" id="L268">    log.trace(&quot;exiting equals&quot;);</span>
+<span class="fc bfc" id="L269" title="All 6 branches covered.">    return hasSameID(m) &amp;&amp; hasEqualReleaseDates(m) &amp;&amp; hasEqualTitles(m);</span>
+  }
+  
+  /**
+   * Checks if parameter is either null or of the same type as this.
+   * 
+   * @param obj the other object to check.
+   * @return true if obj is null or of type Movie.
+   */
+  private boolean isOfSameType(Object obj) {
+<span class="fc" id="L279">    log.trace(&quot;in isOfSameType&quot;);</span>
+<span class="fc bfc" id="L280" title="All 4 branches covered.">    return (obj != null) &amp;&amp; (obj instanceof Movie);</span>
+  }
+
+  /**
+   * Checks if the other movie has the same id as this.
+   * 
+   * @param other Movie to check.
+   * @return true if obj is null or of type Movie.
+   */
+  private boolean hasSameID(final Movie other) {
+<span class="fc" id="L290">    log.trace(&quot;in hasSameID&quot;);</span>
+<span class="fc bfc" id="L291" title="All 2 branches covered.">    return this.getId() == other.getId();</span>
+  }
+
+  /**
+   * @param other the other Movie we are comparing with.
+   * @return checks whether other Movie has the same releaseDate as this.
+   */
+  private boolean hasEqualReleaseDates(final Movie other) {
+<span class="fc" id="L299">    log.trace(&quot;in hasEqualReleaseDates&quot;);</span>
+<span class="pc bpc" id="L300" title="3 of 4 branches missed.">    return getReleaseDate() == null ? other.getReleaseDate() == null : getReleaseDate().equals(other.getReleaseDate());</span>
+  }
+
+  /**
+   * @param other the other Movie we are comparing with.
+   * @return whether the Movies titles are equal.
+   */
+  private boolean hasEqualTitles(final Movie other) {
+<span class="fc" id="L308">    log.trace(&quot;in hasEqualTitles&quot;);</span>
+<span class="pc bpc" id="L309" title="3 of 4 branches missed.">    return getTitle() == null ? other.getTitle() == null : getTitle().equals(other.getTitle());</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.9.201702052155</span></div></body></html>

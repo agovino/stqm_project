@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SQLRentalDAO.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Movie Rental System</a> &gt; <a href="index.source.html" class="el_package">ch.fhnw.swc.mrs.data</a> &gt; <span class="el_source">SQLRentalDAO.java</span></div><h1>SQLRentalDAO.java</h1><pre class="source lang-java linenums">package ch.fhnw.swc.mrs.data;
+
+import java.sql.Connection;
+import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.time.LocalDate;
+import java.util.LinkedList;
+import java.util.List;
+
+import ch.fhnw.swc.mrs.model.Movie;
+import ch.fhnw.swc.mrs.model.Rental;
+import ch.fhnw.swc.mrs.model.User;
+
+/**
+ * SQL access to data.
+ */
+public class SQLRentalDAO extends AbstractDAO implements RentalDAO {
+
+    /** SQL statement to delete movie. */
+    private static final String DELETE_SQL = &quot;DELETE FROM rentals WHERE id = ?&quot;;
+    /** SQL statement to create movie. */
+    private static final String INSERT_SQL = &quot;INSERT INTO rentals ( movieid, clientid, rentaldate )&quot;
+            + &quot;  VALUES ( ?, ?, ? )&quot;;
+    /** select clause of queries. */
+    private static final String SELECT_CLAUSE = &quot;SELECT id, movieid, clientid, rentaldate FROM rentals &quot;;
+    /** SQL statement to get movie by id. */
+    private static final String GET_BY_ID_SQL = SELECT_CLAUSE + &quot; WHERE id = ?&quot;;
+
+    /** SQL statement to get all movies. */
+    private static final String GET_ALL_SQL = SELECT_CLAUSE;
+
+    /**
+     * Create a new DAO which uses the given connection.
+     * 
+     * @param c connection.
+     */
+    public SQLRentalDAO(Connection c) {
+<span class="nc" id="L41">        super(c);</span>
+<span class="nc" id="L42">    }</span>
+
+    @Override
+    public void delete(Rental rental) {
+        try {
+<span class="nc" id="L47">            PreparedStatement ps = getConnection().prepareStatement(DELETE_SQL);</span>
+<span class="nc" id="L48">            int id = rental.getId();</span>
+<span class="nc" id="L49">            ps.setInt(1, id);</span>
+<span class="nc" id="L50">            ps.execute();</span>
+<span class="nc" id="L51">            ps.close();</span>
+<span class="nc" id="L52">        } catch (SQLException e) {</span>
+<span class="nc" id="L53">            throw new RuntimeException(e);</span>
+        }
+<span class="nc" id="L55">    }</span>
+
+    /**
+     * Read single Rental object.
+     * 
+     * @param r cursor into result set
+     * @return Rental object
+     * @throws SQLException whenever there is a problem.
+     */
+    private Rental readRental(ResultSet r) throws SQLException {
+<span class="nc" id="L65">        int id = r.getInt(&quot;id&quot;);</span>
+<span class="nc" id="L66">        int mid = r.getInt(&quot;movieid&quot;);</span>
+<span class="nc" id="L67">        int cid = r.getInt(&quot;clientid&quot;);</span>
+<span class="nc" id="L68">        LocalDate rentaldate = r.getDate(&quot;rentaldate&quot;).toLocalDate();</span>
+
+<span class="nc" id="L70">        SQLMovieDAO mDao = new SQLMovieDAO(getConnection());</span>
+<span class="nc" id="L71">        Movie m = mDao.getById(mid);</span>
+
+<span class="nc" id="L73">        SQLUserDAO uDao = new SQLUserDAO(getConnection());</span>
+<span class="nc" id="L74">        User u = uDao.getById(cid);</span>
+
+<span class="nc" id="L76">        Rental rental = Rental.materializeRentalFromDB(id, u, m, rentaldate);</span>
+<span class="nc" id="L77">        return rental;</span>
+    }
+
+    @Override
+    public List&lt;Rental&gt; getAll() {
+        try {
+<span class="nc" id="L83">            List&lt;Rental&gt; result = new LinkedList&lt;Rental&gt;();</span>
+<span class="nc" id="L84">            PreparedStatement ps = getConnection().prepareStatement(GET_ALL_SQL);</span>
+<span class="nc" id="L85">            ResultSet r = ps.executeQuery();</span>
+<span class="nc bnc" id="L86" title="All 2 branches missed.">            while (r.next()) {</span>
+<span class="nc" id="L87">                Rental rtl = readRental(r);</span>
+<span class="nc" id="L88">                result.add(rtl);</span>
+            }
+<span class="nc" id="L90">            r.close();</span>
+<span class="nc" id="L91">            ps.close();</span>
+<span class="nc" id="L92">            return result;</span>
+<span class="nc" id="L93">        } catch (SQLException e) {</span>
+<span class="nc" id="L94">            throw new RuntimeException(e);</span>
+        }
+    }
+
+    @Override
+    public Rental getById(int id) {
+        try {
+<span class="nc" id="L101">            Rental result = null;</span>
+<span class="nc" id="L102">            PreparedStatement ps = getConnection().prepareStatement(GET_BY_ID_SQL);</span>
+<span class="nc" id="L103">            ps.setInt(1, id);</span>
+<span class="nc" id="L104">            ResultSet r = ps.executeQuery();</span>
+<span class="nc bnc" id="L105" title="All 2 branches missed.">            if (r.next()) {</span>
+<span class="nc" id="L106">                result = readRental(r);</span>
+            }
+<span class="nc" id="L108">            r.close();</span>
+<span class="nc" id="L109">            ps.close();</span>
+<span class="nc" id="L110">            return result;</span>
+<span class="nc" id="L111">        } catch (SQLException e) {</span>
+<span class="nc" id="L112">            throw new RuntimeException(e);</span>
+        }
+    }
+
+    @Override
+    public List&lt;Rental&gt; getRentalsByUser(User user) {
+        // TODO Auto-generated method stub
+<span class="nc" id="L119">        return null;</span>
+    }
+
+    @Override
+    public void save(Rental rental) {
+        try {
+<span class="nc" id="L125">            PreparedStatement ps = getConnection().prepareStatement(GET_BY_ID_SQL);</span>
+<span class="nc" id="L126">            ps.setInt(1, rental.getId());</span>
+<span class="nc" id="L127">            ResultSet r = ps.executeQuery();</span>
+            PreparedStatement writeStmt;
+<span class="nc" id="L129">            int paramcount = 1;</span>
+<span class="nc" id="L130">            writeStmt = getConnection().prepareStatement(INSERT_SQL, Statement.RETURN_GENERATED_KEYS);</span>
+<span class="nc" id="L131">            writeStmt.setInt(paramcount++, rental.getMovie().getId());</span>
+<span class="nc" id="L132">            writeStmt.setInt(paramcount++, rental.getUser().getId());</span>
+<span class="nc" id="L133">            writeStmt.setDate(paramcount++, Date.valueOf(rental.getRentalDate()));</span>
+<span class="nc" id="L134">            writeStmt.execute();</span>
+<span class="nc" id="L135">            getConnection().commit();</span>
+<span class="nc" id="L136">            r = writeStmt.getGeneratedKeys();</span>
+<span class="nc bnc" id="L137" title="All 2 branches missed.">            if (r.next()) {</span>
+<span class="nc" id="L138">                rental.setId(r.getInt(1));</span>
+            }
+<span class="nc" id="L140">            writeStmt.close();</span>
+<span class="nc" id="L141">            r.close();</span>
+<span class="nc" id="L142">            ps.close();</span>
+<span class="nc" id="L143">        } catch (SQLException e) {</span>
+<span class="nc" id="L144">            throw new RuntimeException(e);</span>
+        }
+<span class="nc" id="L146">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.9.201702052155</span></div></body></html>

@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>User.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Movie Rental System</a> &gt; <a href="index.source.html" class="el_package">ch.fhnw.swc.mrs.model</a> &gt; <span class="el_source">User.java</span></div><h1>User.java</h1><pre class="source lang-java linenums"><span class="fc" id="L1">package ch.fhnw.swc.mrs.model;</span>
+
+import java.time.LocalDate;
+import java.util.LinkedList;
+import java.util.List;
+
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+
+/**
+ * Represents the client of a movie store.
+ * 
+ */
+public class User {
+
+  /**
+   * Flag indicating whether object has been initialized.
+   */
+<span class="fc" id="L23">  private boolean initialized = false;</span>
+
+  /** An identification number unique to each user. */
+<span class="fc" id="L26">  private final IntegerProperty id = new SimpleIntegerProperty(0) {</span>
+    @Override public void set(int anId) {
+<span class="fc bfc" id="L28" title="All 2 branches covered.">      if (initialized) {</span>
+<span class="fc" id="L29">        throw new MovieRentalException(&quot;illegal change of user's id&quot;);</span>
+      } else {
+<span class="fc" id="L31">        initialized = true;</span>
+<span class="fc" id="L32">        super.set(anId);</span>
+      }
+<span class="fc" id="L34">    }</span>
+  };
+
+  /** The user's family name. */
+<span class="fc" id="L38">  private final StringProperty name = new SimpleStringProperty(&quot;Unnamed&quot;) {</span>
+    @Override public void set(String aName) {
+<span class="fc" id="L40">      checkName(aName);</span>
+<span class="fc" id="L41">      super.set(aName);</span>
+<span class="fc" id="L42">    }</span>
+  };
+
+  /** The user's first name. */
+<span class="fc" id="L46">  private final StringProperty firstName = new SimpleStringProperty(&quot;Unnamed&quot;) {</span>
+    @Override public void set(String aName) {
+<span class="fc" id="L48">      checkName(aName);</span>
+<span class="fc" id="L49">      super.set(aName);</span>
+<span class="fc" id="L50">    }</span>
+  };
+
+  /** The user's birthdate is used to check age ratings. */
+<span class="fc" id="L54">  private final ObjectProperty&lt;LocalDate&gt; birthdate = new SimpleObjectProperty&lt;LocalDate&gt;() {</span>
+    @Override public void set(LocalDate aBirthdate) {
+<span class="fc" id="L56">      checkBirthdate(aBirthdate);</span>
+<span class="fc" id="L57">      super.set(aBirthdate);</span>
+<span class="fc" id="L58">    }</span>
+  };
+
+  /**
+   * A list of rentals of the user.
+   */
+<span class="fc" id="L64">  private List&lt;Rental&gt; rentals = new LinkedList&lt;Rental&gt;();</span>
+
+  /**
+   * Create a new user with the given name information.
+   * 
+   * @param aName the user's family name.
+   * @param aFirstName the user's first name.
+   * @param aBirthdate the users's birthdate. Must not be in the future.
+   * @throws IllegalArgumentException The name must neither be &lt;code&gt;null&lt;/code&gt;.
+   * @throws MovieRentalException If the name is empty (&quot;&quot;) or longer than 40 characters.
+   */
+<span class="fc" id="L75">  public User(String aName, String aFirstName, LocalDate aBirthdate) {</span>
+<span class="fc" id="L76">    name.set(aName);</span>
+<span class="fc" id="L77">    firstName.set(aFirstName);</span>
+<span class="fc" id="L78">    birthdate.set(aBirthdate);</span>
+<span class="fc" id="L79">  }</span>
+
+  /**
+   * Checks if birthdate is valid.
+   * 
+   * @param aBirthdate must not be null or in the future.
+   */
+  private void checkBirthdate(LocalDate aBirthdate) {
+<span class="fc" id="L87">    LocalDate now = LocalDate.now();</span>
+<span class="pc bpc" id="L88" title="1 of 2 branches missed.">    if (now.isBefore(aBirthdate)) {</span>
+<span class="nc" id="L89">      throw new IllegalArgumentException(&quot;illegal birthdate&quot;);</span>
+    }
+<span class="fc" id="L91">  }</span>
+
+  /**
+   * Checks if name is valid.
+   * 
+   * @param aName the name of the user.
+   */
+  private void checkName(String aName) {
+<span class="fc bfc" id="L99" title="All 2 branches covered.">    if (aName != null) {</span>
+<span class="fc bfc" id="L100" title="All 4 branches covered.">      if ((aName.length() == 0) || (aName.length() &gt; 40)) {</span>
+<span class="fc" id="L101">        throw new MovieRentalException(&quot;invalid name value&quot;);</span>
+      }
+    } else {
+<span class="fc" id="L104">      throw new IllegalArgumentException(&quot;non-existing name&quot;);</span>
+    }
+
+<span class="fc" id="L107">  }</span>
+
+  /**
+   * @return The user's unique identification number.
+   */
+  public int getId() {
+<span class="fc" id="L113">    return id.get();</span>
+  }
+
+  /**
+   * @param anID set the user's unique identification number.
+   */
+  public void setId(int anID) {
+<span class="fc" id="L120">    id.set(anID);</span>
+<span class="fc" id="L121">  }</span>
+
+  /** @return Java FX property for unique identification. */
+  public IntegerProperty idProperty() {
+<span class="nc" id="L125">    return id;</span>
+  }
+
+  /**
+   * @return get a list of the user's rentals.
+   */
+  public List&lt;Rental&gt; getRentals() {
+<span class="fc" id="L132">    return rentals;</span>
+  }
+
+  /**
+   * @param someRentals set the user's rentals.
+   */
+  public void setRentals(List&lt;Rental&gt; someRentals) {
+<span class="fc" id="L139">    this.rentals = someRentals;</span>
+<span class="fc" id="L140">  }</span>
+
+  /** {@inheritDoc} */
+  public String getName() {
+<span class="fc" id="L144">    return name.get();</span>
+  }
+
+  /**
+   * @param aName set the user's family name.
+   * @throws NullPointerException The name must neither be &lt;code&gt;null&lt;/code&gt;.
+   * @throws MovieRentalException If the name is emtpy (&quot;&quot;) or longer than 40 characters.
+   */
+  public void setName(String aName) {
+<span class="fc" id="L153">    name.set(aName);</span>
+<span class="fc" id="L154">  }</span>
+
+  /** @return Java FX property for surname. */
+  public StringProperty nameProperty() {
+<span class="nc" id="L158">    return name;</span>
+  }
+
+  /**
+   * @return get the user's first name.
+   */
+  public String getFirstName() {
+<span class="fc" id="L165">    return firstName.get();</span>
+  }
+
+  /**
+   * @param aFirstName set the user's family name.
+   * @throws NullPointerException The first name must not be &lt;code&gt;null&lt;/code&gt;.
+   * @throws MovieRentalException If the name is emtpy (&quot;&quot;) or longer than 40 characters.
+   */
+  public void setFirstName(String aFirstName) {
+<span class="fc" id="L174">    firstName.set(aFirstName);</span>
+<span class="fc" id="L175">  }</span>
+
+  /** @return Java FX property for first name. */
+  public StringProperty firstNameProperty() {
+<span class="nc" id="L179">    return firstName;</span>
+  }
+
+  /**
+   * @return user's birth date.
+   */
+  public LocalDate getBirthdate() {
+<span class="fc" id="L186">    return birthdate.get();</span>
+  }
+
+  /**
+   * Set a users birthdate.
+   * 
+   * @param aBirthdate must not be in the future.
+   */
+  public void setBirthdate(LocalDate aBirthdate) {
+<span class="fc" id="L195">    birthdate.set(aBirthdate);</span>
+<span class="fc" id="L196">  }</span>
+
+  /** @return Java FX property for birthdate. */
+  public ObjectProperty&lt;LocalDate&gt; birthdateProperty() {
+<span class="nc" id="L200">    return birthdate;</span>
+  }
+
+  /**
+   * Calculate the total charge the user has to pay for all his/her rentals.
+   * 
+   * @return the total charge.
+   */
+  public double getCharge() {
+<span class="fc" id="L209">    double result = 0.0d;</span>
+<span class="fc bfc" id="L210" title="All 2 branches covered.">    for (Rental rental : rentals) {</span>
+<span class="fc" id="L211">      result += rental.getMovie().getPriceCategory().getCharge(rental.getRentalDays());</span>
+    }
+<span class="fc" id="L213">    return result;</span>
+  }
+
+  @Override
+  public boolean equals(Object o) {
+<span class="fc bfc" id="L218" title="All 2 branches covered.">    boolean result = this == o;</span>
+<span class="fc bfc" id="L219" title="All 2 branches covered.">    if (!result) {</span>
+<span class="fc bfc" id="L220" title="All 2 branches covered.">      if (o instanceof User) {</span>
+<span class="fc" id="L221">        User other = (User) o;</span>
+<span class="fc bfc" id="L222" title="All 2 branches covered.">        result = getId() == other.getId();</span>
+<span class="fc" id="L223">        result &amp;= getName().equals(other.getName());</span>
+<span class="fc" id="L224">        result &amp;= getFirstName().equals(other.getFirstName());</span>
+<span class="fc" id="L225">        result &amp;= getBirthdate().equals(other.getBirthdate());</span>
+      }
+    }
+<span class="fc" id="L228">    return result;</span>
+  }
+
+  @Override
+  public int hashCode() {
+<span class="fc bfc" id="L233" title="All 2 branches covered.">    int result = (initialized) ? getId() : 0;</span>
+<span class="fc" id="L234">    result = 19 * result + getName().hashCode();</span>
+<span class="fc" id="L235">    result = 19 * result + getFirstName().hashCode();</span>
+<span class="fc" id="L236">    return result;</span>
+  }
+
+  /**
+   * check if user has rentals.
+   * 
+   * @return true if found
+   */
+  public boolean hasRentals() {
+<span class="nc bnc" id="L245" title="All 2 branches missed.">    return !rentals.isEmpty();</span>
+  }
+
+  /**
+   * add a new rental to the user.
+   * 
+   * @param rental the rental
+   * @return number of rentals of the user
+   */
+  public int addRental(Rental rental) {
+<span class="nc" id="L255">    rentals.add(rental);</span>
+<span class="nc" id="L256">    return rentals.size();</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.9.201702052155</span></div></body></html>

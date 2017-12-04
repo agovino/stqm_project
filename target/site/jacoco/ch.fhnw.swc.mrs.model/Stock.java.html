@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Stock.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Movie Rental System</a> &gt; <a href="index.source.html" class="el_package">ch.fhnw.swc.mrs.model</a> &gt; <span class="el_source">Stock.java</span></div><h1>Stock.java</h1><pre class="source lang-java linenums">package ch.fhnw.swc.mrs.model;
+
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+
+/**
+ * Manages the stock of videos of the rental shop.
+ */
+<span class="fc" id="L10">public class Stock {</span>
+
+  /** The stock of videos. */
+<span class="fc" id="L13">  private HashMap&lt;String, Integer&gt; stock = new HashMap&lt;String, Integer&gt;();</span>
+
+  /** low stock listeners. */
+<span class="fc" id="L16">  private List&lt;LowStockListener&gt; listeners = new LinkedList&lt;LowStockListener&gt;();</span>
+
+  /**
+   * Add a movie to the stock.
+   * 
+   * @param movie the movie to add to the stock.
+   * @return the number of items of this movie in stock after this operation.
+   * @throws NullPointerException if the argument is &lt;code&gt;null&lt;/code&gt;
+   */
+  public int addToStock(Movie movie) {
+<span class="fc" id="L26">    Integer i = stock.get(movie.getTitle());</span>
+<span class="fc bfc" id="L27" title="All 2 branches covered.">    int inStock = (i == null) ? 0 : i;</span>
+<span class="fc" id="L28">    stock.put(movie.getTitle(), ++inStock);</span>
+<span class="fc" id="L29">    return inStock;</span>
+  }
+
+  /**
+   * Removes a movie from the stock.
+   * 
+   * @param movie the movie to remove from the stock.
+   * @return the number of items of this movie in stock after this operation.
+   */
+  public int removeFromStock(Movie movie) {
+<span class="fc" id="L39">    String title = movie.getTitle();</span>
+<span class="fc" id="L40">    Integer i = stock.get(title);</span>
+<span class="fc bfc" id="L41" title="All 2 branches covered.">    int inStock = (i == null) ? 0 : i;</span>
+<span class="fc bfc" id="L42" title="All 2 branches covered.">    if (inStock &lt;= 0) {</span>
+<span class="fc" id="L43">      throw new MovieRentalException(&quot;no video in stock&quot;);</span>
+    }
+<span class="fc" id="L45">    stock.put(title, --inStock);</span>
+<span class="fc" id="L46">    notifyListeners(movie, inStock);</span>
+<span class="fc" id="L47">    return inStock;</span>
+  }
+
+  /**
+   * Notify all LowStockListeners with a threshold of c or below that movie m is low in stock.
+   * 
+   * @param m movie to notify
+   * @param c threshold for notification
+   */
+  private void notifyListeners(Movie m, int c) {
+<span class="fc bfc" id="L57" title="All 2 branches covered.">    for (LowStockListener l : listeners) {</span>
+<span class="fc bfc" id="L58" title="All 2 branches covered.">      if (l.getThreshold() &gt;= c) {</span>
+<span class="fc" id="L59">        l.stockLow(m, c);</span>
+      }
+    }
+<span class="fc" id="L62">  }</span>
+
+  /**
+   * @param title the movie title to get the stock count.
+   * @return the number copies of the movie still in stock.
+   */
+  public int getInStock(String title) {
+<span class="fc" id="L69">    Integer i = stock.get(title);</span>
+<span class="pc bpc" id="L70" title="1 of 2 branches missed.">    return (i == null) ? 0 : i;</span>
+  }
+
+  /**
+   * Add a stock listener.
+   * 
+   * @param l listener
+   */
+  public void addLowStockListener(LowStockListener l) {
+<span class="pc bpc" id="L79" title="2 of 4 branches missed.">    if (l != null &amp;&amp; !listeners.contains(l)) {</span>
+<span class="fc" id="L80">      listeners.add(l);</span>
+    }
+<span class="fc" id="L82">  }</span>
+
+  /**
+   * Remove a stock listener.
+   * 
+   * @param l listener
+   */
+  public void removeLowStockListener(LowStockListener l) {
+<span class="fc" id="L90">    listeners.remove(l);</span>
+<span class="fc" id="L91">  }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.9.201702052155</span></div></body></html>

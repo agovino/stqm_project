@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>HsqlDatabase.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Movie Rental System</a> &gt; <a href="index.source.html" class="el_package">ch.fhnw.swc.mrs.data</a> &gt; <span class="el_source">HsqlDatabase.java</span></div><h1>HsqlDatabase.java</h1><pre class="source lang-java linenums">package ch.fhnw.swc.mrs.data;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.LinkedList;
+import java.util.List;
+
+
+/**
+ * Responsible to initialize database.
+ */
+<span class="nc" id="L18">public final class HsqlDatabase implements Database {</span>
+    public static final String DB_DRIVER = &quot;org.hsqldb.jdbcDriver&quot;;
+    private String dbCONNECTION;
+
+    @Override
+    public void initDB(String dbconnection) throws Exception {
+<span class="nc" id="L24">        dbCONNECTION = dbconnection;</span>
+<span class="nc" id="L25">        Connection connection = initDataSource();</span>
+
+        // create database tables only if they do not yet exist.
+<span class="nc" id="L28">        createDatabaseModel(connection);</span>
+
+<span class="nc" id="L30">        connection.close();</span>
+<span class="nc" id="L31">    }</span>
+
+    private Connection initDataSource() throws Exception {
+<span class="nc" id="L34">        Class.forName(DB_DRIVER);</span>
+<span class="nc" id="L35">        return DriverManager.getConnection(dbCONNECTION, &quot;SA&quot;, &quot;&quot;);</span>
+    }
+
+    /**
+     * Create the database tables.
+     */
+    private void createDatabaseModel(Connection conn) {
+        try {
+<span class="nc" id="L43">            InputStream stream = getClass().getResourceAsStream(&quot;/data/DBSetup.script&quot;);</span>
+<span class="nc" id="L44">            List&lt;String&gt; commands = readAllLines(stream);</span>
+            
+<span class="nc bnc" id="L46" title="All 2 branches missed.">            for (String line: commands) {</span>
+<span class="nc" id="L47">                command(line, conn);</span>
+            }
+<span class="nc" id="L49">        } catch (Exception e) {</span>
+<span class="nc" id="L50">            e.printStackTrace();</span>
+        }
+<span class="nc" id="L52">    }</span>
+
+    /**
+     * use for SQL commands CREATE, DROP, INSERT and UPDATE.
+     * 
+     * @param expression SQL command
+     * @throws SQLException when something went wrong
+     */
+    private synchronized void command(String expression, Connection connection) throws SQLException {
+<span class="nc" id="L61">        Statement st = null;</span>
+<span class="nc" id="L62">        st = connection.createStatement(); // statements</span>
+<span class="nc" id="L63">        int i = st.executeUpdate(expression); // run the query</span>
+<span class="nc bnc" id="L64" title="All 2 branches missed.">        if (i == -1) {</span>
+<span class="nc" id="L65">            System.out.println(&quot;db error : &quot; + expression);</span>
+        }
+<span class="nc" id="L67">        st.close();</span>
+<span class="nc" id="L68">    }</span>
+
+    @Override
+    public Connection getConnection() throws SQLException {
+<span class="nc" id="L72">        return DriverManager.getConnection(dbCONNECTION, &quot;SA&quot;, &quot;&quot;);</span>
+    }
+    
+    private List&lt;String&gt; readAllLines(InputStream is) throws IOException {
+<span class="nc" id="L76">        List&lt;String&gt; result = new LinkedList&lt;&gt;();</span>
+<span class="nc" id="L77">        BufferedReader b = new BufferedReader(new InputStreamReader(is));</span>
+        String line;
+<span class="nc bnc" id="L79" title="All 2 branches missed.">        while ((line = b.readLine()) != null) {</span>
+<span class="nc" id="L80">            result.add(line);</span>
+        }
+<span class="nc" id="L82">        return result;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.9.201702052155</span></div></body></html>

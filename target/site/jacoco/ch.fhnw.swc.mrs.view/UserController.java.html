@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>UserController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Movie Rental System</a> &gt; <a href="index.source.html" class="el_package">ch.fhnw.swc.mrs.view</a> &gt; <span class="el_source">UserController.java</span></div><h1>UserController.java</h1><pre class="source lang-java linenums">package ch.fhnw.swc.mrs.view;
+
+import java.time.LocalDate;
+import java.util.List;
+
+import ch.fhnw.swc.mrs.model.MRSServices;
+import ch.fhnw.swc.mrs.model.User;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.fxml.FXML;
+import javafx.scene.control.Button;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.GridPane;
+
+/**
+ * Java FX controller class for Users.
+ */
+<span class="nc" id="L21">public class UserController implements MRSServiceUtilizer {</span>
+  @FXML
+  private TableView&lt;User&gt; userTable;
+  @FXML
+  private TableColumn&lt;User, Number&gt; idColumn;
+  @FXML
+  private TableColumn&lt;User, String&gt; surnameColumn;
+  @FXML
+  private TableColumn&lt;User, String&gt; firstNameColumn;
+  @FXML
+  private TableColumn&lt;User, LocalDate&gt; birthdateColumn;
+  @FXML
+  private GridPane grid;
+  @FXML
+  private TextField surnameField;
+  @FXML
+  private TextField firstNameField;
+  @FXML
+  private DatePicker birthdatePicker;
+  @FXML
+  private Button cancelButton;
+  @FXML
+  private Button newButton;
+  @FXML
+  private Button editButton;
+  @FXML
+  private Button deleteButton;
+  @FXML
+  private Button saveButton;
+
+<span class="nc" id="L51">  private User editing = null;  // currently no user is being edited.</span>
+  private MRSServices backend;
+<span class="nc" id="L53">  private ObservableList&lt;User&gt; userList = FXCollections.observableArrayList();</span>
+
+  /**
+   * Initializes the controller class. This method is automatically called after
+   * the fxml file has been loaded.
+   */
+  @FXML
+  private void initialize() {
+    // Initialize the movie table.
+<span class="nc" id="L62">    idColumn.setCellValueFactory(cellData -&gt; cellData.getValue().idProperty());</span>
+<span class="nc" id="L63">    surnameColumn.setCellValueFactory(cellData -&gt; cellData.getValue().nameProperty());</span>
+<span class="nc" id="L64">    firstNameColumn.setCellValueFactory(cellData -&gt; cellData.getValue().firstNameProperty());</span>
+<span class="nc" id="L65">    birthdateColumn.setCellValueFactory(cellData -&gt; cellData.getValue().birthdateProperty());</span>
+
+<span class="nc" id="L67">    userTable.getSelectionModel().selectedItemProperty().addListener(</span>
+<span class="nc" id="L68">        (observable, oldValue, newValue) -&gt; handleSelectionChange(oldValue, newValue));</span>
+
+<span class="nc" id="L70">    grid.setDisable(true);</span>
+<span class="nc" id="L71">    showUserDetails(null);</span>
+<span class="nc" id="L72">  }</span>
+
+  private Object handleSelectionChange(User oldValue, User newValue) {
+<span class="nc" id="L75">    handleCancel();</span>
+<span class="nc bnc" id="L76" title="All 2 branches missed.">    if (newValue != null) {</span>
+<span class="nc" id="L77">      editButton.setDisable(false);</span>
+<span class="nc" id="L78">      deleteButton.setDisable(false);</span>
+    }
+<span class="nc" id="L80">    return null;</span>
+  }
+
+  private void showUserDetails(User user) {
+<span class="nc bnc" id="L84" title="All 2 branches missed.">    if (user != null) {</span>
+      // fill the labels with info from the Movie object
+<span class="nc" id="L86">      surnameField.setText(user.getName());</span>
+<span class="nc" id="L87">      firstNameField.setText(user.getFirstName());</span>
+<span class="nc" id="L88">      birthdatePicker.setValue(user.getBirthdate());</span>
+<span class="nc" id="L89">    } else {</span>
+      // clear the content and set default values
+<span class="nc" id="L91">      surnameField.setText(&quot;&quot;);</span>
+<span class="nc" id="L92">      firstNameField.setText(&quot;&quot;);</span>
+<span class="nc" id="L93">      birthdatePicker.setValue(null);</span>
+    }
+<span class="nc" id="L95">  }</span>
+
+  @FXML
+  private void handleCancel() {
+<span class="nc" id="L99">    cancelButton.setDisable(true);</span>
+<span class="nc" id="L100">    newButton.setDisable(false);</span>
+<span class="nc" id="L101">    editButton.setDisable(true);</span>
+<span class="nc" id="L102">    deleteButton.setDisable(true);</span>
+<span class="nc" id="L103">    saveButton.setDisable(true);</span>
+<span class="nc" id="L104">    showUserDetails(null);</span>
+<span class="nc" id="L105">    surnameField.setEditable(false);</span>
+<span class="nc" id="L106">    firstNameField.setEditable(false);</span>
+<span class="nc" id="L107">    birthdatePicker.setEditable(false);</span>
+<span class="nc" id="L108">    grid.setDisable(true);</span>
+<span class="nc" id="L109">    editing = null;</span>
+<span class="nc" id="L110">  }</span>
+
+  @FXML
+  private void handleNew() {
+<span class="nc" id="L114">    cancelButton.setDisable(false);</span>
+<span class="nc" id="L115">    newButton.setDisable(true);</span>
+<span class="nc" id="L116">    editButton.setDisable(true);</span>
+<span class="nc" id="L117">    deleteButton.setDisable(true);</span>
+<span class="nc" id="L118">    saveButton.setDisable(false);</span>
+<span class="nc" id="L119">    showUserDetails(null);</span>
+<span class="nc" id="L120">    surnameField.setEditable(true);</span>
+<span class="nc" id="L121">    firstNameField.setEditable(true);</span>
+<span class="nc" id="L122">    birthdatePicker.setEditable(true);</span>
+<span class="nc" id="L123">    grid.setDisable(false);</span>
+<span class="nc" id="L124">    surnameField.requestFocus();</span>
+<span class="nc" id="L125">    editing = null;</span>
+<span class="nc" id="L126">  }</span>
+
+  @FXML
+  private void handleSave() {
+<span class="nc bnc" id="L130" title="All 2 branches missed.">    if (editing == null) {</span>
+<span class="nc" id="L131">      User u = new User(surnameField.getText(),</span>
+<span class="nc" id="L132">                        firstNameField.getText(),</span>
+<span class="nc" id="L133">                        birthdatePicker.getValue());</span>
+<span class="nc" id="L134">      u = backend.createUser(u);</span>
+<span class="nc" id="L135">      userTable.getItems().add(u);</span>
+<span class="nc" id="L136">    } else {</span>
+<span class="nc" id="L137">      editing.setName(surnameField.getText());</span>
+<span class="nc" id="L138">      editing.setFirstName(firstNameField.getText());</span>
+<span class="nc" id="L139">      editing.setBirthdate(birthdatePicker.getValue());</span>
+<span class="nc" id="L140">      backend.updateUser(editing);</span>
+    }
+<span class="nc" id="L142">    handleCancel();</span>
+<span class="nc" id="L143">  }</span>
+
+  @FXML
+  private void handleEdit() {
+<span class="nc" id="L147">    cancelButton.setDisable(false);</span>
+<span class="nc" id="L148">    newButton.setDisable(true);</span>
+<span class="nc" id="L149">    editButton.setDisable(true);</span>
+<span class="nc" id="L150">    deleteButton.setDisable(true);</span>
+<span class="nc" id="L151">    saveButton.setDisable(false);</span>
+<span class="nc" id="L152">    User u = userTable.getSelectionModel().getSelectedItem();</span>
+<span class="nc" id="L153">    showUserDetails(u);</span>
+<span class="nc" id="L154">    surnameField.setEditable(true);</span>
+<span class="nc" id="L155">    firstNameField.setEditable(true);</span>
+<span class="nc" id="L156">    birthdatePicker.setEditable(true);</span>
+<span class="nc" id="L157">    grid.setDisable(false);</span>
+<span class="nc" id="L158">    surnameField.requestFocus();</span>
+<span class="nc" id="L159">    editing = u;</span>
+<span class="nc" id="L160">  }</span>
+
+  @FXML
+  private void handleDelete() {
+<span class="nc" id="L164">    cancelButton.setDisable(true);</span>
+<span class="nc" id="L165">    newButton.setDisable(false);</span>
+<span class="nc" id="L166">    editButton.setDisable(true);</span>
+<span class="nc" id="L167">    deleteButton.setDisable(true);</span>
+<span class="nc" id="L168">    saveButton.setDisable(true);</span>
+<span class="nc" id="L169">    User m = userTable.getSelectionModel().getSelectedItem();</span>
+<span class="nc bnc" id="L170" title="All 2 branches missed.">    if (backend.deleteUser(m)) {</span>
+<span class="nc" id="L171">      userTable.getItems().remove(m);</span>
+<span class="nc" id="L172">      userTable.getSelectionModel().clearSelection();</span>
+    }
+<span class="nc" id="L174">    showUserDetails(null);</span>
+<span class="nc" id="L175">    surnameField.setEditable(false);</span>
+<span class="nc" id="L176">    firstNameField.setEditable(false);</span>
+<span class="nc" id="L177">    birthdatePicker.setEditable(false);</span>
+<span class="nc" id="L178">    grid.setDisable(true);</span>
+<span class="nc" id="L179">    editing = null;</span>
+<span class="nc" id="L180">  }</span>
+
+  @Override
+  public void setServiceProvider(MRSServices provider) {
+<span class="nc" id="L184">    backend = provider;</span>
+<span class="nc" id="L185">  }</span>
+
+  @Override
+  public void reload() {
+<span class="nc" id="L189">    userList.clear();</span>
+<span class="nc" id="L190">    List&lt;User&gt; users = backend.getAllUsers();</span>
+<span class="nc bnc" id="L191" title="All 2 branches missed.">    for (User u: users) {</span>
+<span class="nc" id="L192">      userList.add(u);</span>
+    }
+<span class="nc" id="L194">    userTable.setItems(userList);</span>
+<span class="nc" id="L195">  }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.9.201702052155</span></div></body></html>

@@ -1,0 +1,8 @@
+-------------------------------------------------------------------------------
+Test set: ch.fhnw.swc.mrs.model.ITBill
+-------------------------------------------------------------------------------
+Tests run: 4, Failures: 1, Errors: 0, Skipped: 0, Time elapsed: 0.078 sec <<< FAILURE! - in ch.fhnw.swc.mrs.model.ITBill
+testPrintRegularUsername(ch.fhnw.swc.mrs.model.ITBill)  Time elapsed: 0.015 sec  <<< FAILURE!
+org.junit.ComparisonFailure: expected:<   0    0[.]00  Avatar> but was:<   0    0[,]00  Avatar>
+	at ch.fhnw.swc.mrs.model.ITBill.testPrintRegularUsername(ITBill.java:71)
+

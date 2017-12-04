@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Statement.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Movie Rental System</a> &gt; <a href="index.source.html" class="el_package">ch.fhnw.swc.mrs.model</a> &gt; <span class="el_source">Statement.java</span></div><h1>Statement.java</h1><pre class="source lang-java linenums"> package ch.fhnw.swc.mrs.model;
+
+import java.util.List;
+
+public abstract class Statement {
+
+    private List&lt;Rental&gt; rentals;
+    private String firstName;
+    private String lastName;
+
+    /**
+     * Creates a statement object for a person (with the given name parameter) and a list of rentals.
+     * @param name the family name.
+     * @param firstName the first name.
+     * @param rentals a list of rentals to be billed.
+     */
+<span class="fc" id="L17">    public Statement(String name, String firstName, List&lt;Rental&gt; rentals) {</span>
+    	
+    	// if the name is too long for the print; shorten it and add
+    	// dots to indicate name is longer
+<span class="fc bfc" id="L21" title="All 6 branches covered.">        if (name.length() &gt; 8 || firstName.length() &gt; 8 || rentals == null) {</span>
+<span class="fc" id="L22">        	throw new IllegalArgumentException();</span>
+        }
+<span class="fc" id="L24">        this.firstName = firstName; </span>
+<span class="fc" id="L25">        this.lastName = name;</span>
+<span class="fc" id="L26">        this.rentals = rentals;</span>
+<span class="fc" id="L27">    }</span>
+    
+    /** @return A list of rentals to be used to print a statement. */
+    public List&lt;Rental&gt; getRentals() {
+<span class="fc" id="L31">        return rentals;</span>
+    }
+    
+    /** @return The first name of the client for whom the statement is created. */
+    public String getFirstName() {
+<span class="fc" id="L36">        return firstName;</span>
+    }
+    
+    /** @return The family name of the client for whom the statement is created. */
+    public String getLastName() {
+<span class="fc" id="L41">        return lastName;</span>
+    }
+
+    /**
+     * Prints a statement for the given client and the list of rentals.
+     * @return a multi-line string containing an aligned statement (when using fixed spaced font).
+     */
+    public abstract String print();
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.9.201702052155</span></div></body></html>

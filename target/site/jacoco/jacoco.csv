@@ -1,0 +1,38 @@
+GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
+Movie Rental System,ch.fhnw.swc.mrs.model,RegularPriceCategory,0,35,0,4,0,11,0,7,0,5
+Movie Rental System,ch.fhnw.swc.mrs.model,Movie,53,306,8,20,12,75,13,28,7,20
+Movie Rental System,ch.fhnw.swc.mrs.model,MovieRentalException,0,4,0,0,0,2,0,1,0,1
+Movie Rental System,ch.fhnw.swc.mrs.model,Statement,0,35,0,6,0,10,0,7,0,4
+Movie Rental System,ch.fhnw.swc.mrs.model,Rental,67,282,10,12,13,54,13,21,7,16
+Movie Rental System,ch.fhnw.swc.mrs.model,Movie.new SimpleObjectProperty() {...},0,26,0,2,0,9,0,3,0,2
+Movie Rental System,ch.fhnw.swc.mrs.model,User.new SimpleObjectProperty() {...},0,14,0,0,0,5,0,2,0,2
+Movie Rental System,ch.fhnw.swc.mrs.model,Movie.new SimpleStringProperty() {...},0,31,1,3,0,9,1,3,0,2
+Movie Rental System,ch.fhnw.swc.mrs.model,Movie.new SimpleObjectProperty() {...},0,26,0,2,0,9,0,3,0,2
+Movie Rental System,ch.fhnw.swc.mrs.model,Movie.new SimpleIntegerProperty() {...},0,30,0,4,0,9,0,4,0,2
+Movie Rental System,ch.fhnw.swc.mrs.model,NewReleasePriceCategory,0,37,0,6,0,15,0,9,0,6
+Movie Rental System,ch.fhnw.swc.mrs.model,User.new SimpleIntegerProperty() {...},0,24,0,2,0,7,0,3,0,2
+Movie Rental System,ch.fhnw.swc.mrs.model,PriceCategory,36,15,6,2,11,3,6,4,3,3
+Movie Rental System,ch.fhnw.swc.mrs.model,User.new SimpleStringProperty() {...},0,15,0,0,0,5,0,2,0,2
+Movie Rental System,ch.fhnw.swc.mrs.model,User.new SimpleStringProperty() {...},0,15,0,0,0,5,0,2,0,2
+Movie Rental System,ch.fhnw.swc.mrs.model,Rental.new SimpleIntegerProperty() {...},0,24,0,2,0,7,0,3,0,2
+Movie Rental System,ch.fhnw.swc.mrs.model,Rental.new SimpleObjectProperty() {...},0,24,0,6,0,6,0,5,0,2
+Movie Rental System,ch.fhnw.swc.mrs.model,Rental.new SimpleObjectProperty() {...},0,17,0,2,0,6,0,3,0,2
+Movie Rental System,ch.fhnw.swc.mrs.model,Rental.new SimpleObjectProperty() {...},0,21,0,4,0,6,0,4,0,2
+Movie Rental System,ch.fhnw.swc.mrs.model,Rental.new SimpleLongProperty() {...},0,16,0,0,0,3,0,2,0,2
+Movie Rental System,ch.fhnw.swc.mrs.model,Rental.new SimpleDoubleProperty() {...},0,16,0,0,0,3,0,2,0,2
+Movie Rental System,ch.fhnw.swc.mrs.model,User,34,224,3,19,8,51,8,25,6,16
+Movie Rental System,ch.fhnw.swc.mrs.model,Stock,2,126,3,13,0,26,3,12,0,7
+Movie Rental System,ch.fhnw.swc.mrs.model,ChildrenPriceCategory,0,35,0,4,0,11,0,7,0,5
+Movie Rental System,ch.fhnw.swc.mrs.model,Bill,89,0,2,0,14,0,3,0,2,0
+Movie Rental System,ch.fhnw.swc.mrs.data,AbstractDAO,17,0,0,0,8,0,3,0,3,0
+Movie Rental System,ch.fhnw.swc.mrs.data,SQLRentalDAO,219,0,6,0,62,0,10,0,7,0
+Movie Rental System,ch.fhnw.swc.mrs.data,HsqlDatabase,107,0,6,0,28,0,10,0,7,0
+Movie Rental System,ch.fhnw.swc.mrs.data,SQLUserDAO,254,0,14,0,75,0,14,0,7,0
+Movie Rental System,ch.fhnw.swc.mrs.data,DbMRSServices,222,0,6,0,68,0,24,0,21,0
+Movie Rental System,ch.fhnw.swc.mrs.data,SQLMovieDAO,313,0,14,0,88,0,16,0,9,0
+Movie Rental System,ch.fhnw.swc.mrs.view,UserController,405,0,10,0,102,0,21,0,16,0
+Movie Rental System,ch.fhnw.swc.mrs.view,MRSController,168,0,13,0,30,0,14,0,6,0
+Movie Rental System,ch.fhnw.swc.mrs.view,MovieController,479,0,10,0,108,0,22,0,17,0
+Movie Rental System,ch.fhnw.swc.mrs.view,RentMovieController,323,0,12,0,85,0,24,0,18,0
+Movie Rental System,ch.fhnw.swc.mrs.view,RentalController,158,0,6,0,29,0,17,0,14,0
+Movie Rental System,ch.fhnw.swc.mrs,MovieRentalSystem,51,0,0,0,16,0,3,0,3,0
